@@ -8,6 +8,7 @@ interface AutoShortsStudioProps {
   geminiKey?: string;
   falKey?: string;
   pexelsKey?: string;
+  initialTopic?: string;
   onOpenSettings: () => void;
 }
 
@@ -23,9 +24,10 @@ export const AutoShortsStudio: React.FC<AutoShortsStudioProps> = ({
   geminiKey,
   falKey,
   pexelsKey,
+  initialTopic,
   onOpenSettings,
 }) => {
-  const [topic, setTopic] = useState('');
+  const [topic, setTopic] = useState(initialTopic || '');
   const [language, setLanguage] = useState('Bengali');
   const [voice, setVoice] = useState('bn-BD-PradeepNeural');
   const [visualMode, setVisualMode] = useState<'stock_video' | 'ai_image'>('stock_video');

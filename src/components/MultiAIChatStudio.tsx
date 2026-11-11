@@ -8,6 +8,7 @@ interface MultiAIChatStudioProps {
   openaiKey?: string;
   claudeKey?: string;
   deepseekKey?: string;
+  initialInput?: string;
   onOpenSettings: () => void;
 }
 
@@ -32,6 +33,7 @@ export const MultiAIChatStudio: React.FC<MultiAIChatStudioProps> = ({
   openaiKey,
   claudeKey,
   deepseekKey,
+  initialInput,
   onOpenSettings,
 }) => {
   const [messages, setMessages] = useState<Message[]>([
@@ -41,7 +43,7 @@ export const MultiAIChatStudio: React.FC<MultiAIChatStudioProps> = ({
       model: 'gemini-2.0-flash',
     },
   ]);
-  const [input, setInput] = useState('');
+  const [input, setInput] = useState(initialInput || '');
   const [selectedModel, setSelectedModel] = useState('gemini-2.0-flash');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');

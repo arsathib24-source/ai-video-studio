@@ -20,17 +20,20 @@ import { MOCKUP_ASSETS } from '@/lib/mockup-assets';
 
 interface ImageStudioProps {
   geminiKey?: string;
+  initialPrompt?: string;
   onOpenSettings: () => void;
   onBack?: () => void;
 }
 
 export const ImageStudio: React.FC<ImageStudioProps> = ({
+  initialPrompt,
   onOpenSettings,
   onBack,
 }) => {
   const [mode, setMode] = useState<'text-to-image' | 'image-to-image'>('text-to-image');
   const [prompt, setPrompt] = useState(
-    'A peaceful rural Bangladeshi village, morning sunlight, green nature, a house, cinematic, realistic'
+    initialPrompt ||
+      'A peaceful rural Bangladeshi village, morning sunlight, green nature, a house, cinematic, realistic'
   );
   const [selectedStyle, setSelectedStyle] = useState('Realistic');
   const [aspectRatio, setAspectRatio] = useState<'1:1' | '16:9' | '9:16' | '4:3'>('9:16');

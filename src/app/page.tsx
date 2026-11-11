@@ -22,6 +22,7 @@ export default function HomePage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showWelcome, setShowWelcome] = useState(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [prefilledPrompt, setPrefilledPrompt] = useState('');
 
   // API Keys
   const [geminiKey, setGeminiKey] = useState('');
@@ -82,6 +83,21 @@ export default function HomePage() {
     setFalKey(keys.falKey);
     setReplicateKey(keys.replicateKey);
     if (keys.pexelsKey !== undefined) setPexelsKey(keys.pexelsKey);
+  };
+
+  const handleSelectStudio = (
+    tab: MainNavTab,
+    options?: { prompt?: string; subTab?: 'shorts' | 't2v' | 'i2v' | 'avatar' }
+  ) => {
+    setMainTab(tab);
+    setShowWelcome(false);
+    setMobileMenuOpen(false);
+    if (options?.prompt) {
+      setPrefilledPrompt(options.prompt);
+    }
+    if (options?.subTab) {
+      setVideoSubTab(options.subTab);
+    }
   };
 
   const handleToggleSidebar = () => {
@@ -240,7 +256,7 @@ export default function HomePage() {
                 {/* Screen 2: Home Dashboard Launchpad */}
                 {mainTab === 'home' && (
                   <HomeLaunchpad
-                    onSelectStudio={(tab) => setMainTab(tab)}
+                    onSelectStudio={handleSelectStudio}
                     onOpenSettings={() => setIsSettingsOpen(true)}
                     onToggleMobileMenu={() => setMobileMenuOpen(true)}
                     onOpenWelcome={() => setShowWelcome(true)}
@@ -255,6 +271,7 @@ export default function HomePage() {
                         geminiKey={geminiKey}
                         falKey={falKey}
                         pexelsKey={pexelsKey}
+                        initialTopic={prefilledPrompt}
                         onOpenSettings={() => setIsSettingsOpen(true)}
                       />
                     )}
@@ -287,6 +304,7 @@ export default function HomePage() {
                 {mainTab === 'images' && (
                   <ImageStudio
                     geminiKey={geminiKey}
+                    initialPrompt={prefilledPrompt}
                     onOpenSettings={() => setIsSettingsOpen(true)}
                     onBack={() => setMainTab('home')}
                   />
@@ -299,6 +317,7 @@ export default function HomePage() {
                     openaiKey={openaiKey}
                     claudeKey={claudeKey}
                     deepseekKey={deepseekKey}
+                    initialInput={prefilledPrompt}
                     onOpenSettings={() => setIsSettingsOpen(true)}
                   />
                 )}
