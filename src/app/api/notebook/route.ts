@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
     }
 
     const genAI = getGeminiClient(geminiKey);
-    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash-latest' });
+    const model = genAI.getGenerativeModel({ model: 'gemini-3.1-flash-lite' });
 
     // Action 1: Ask Question about the Document (NotebookLM style)
     if (action === 'chat') {

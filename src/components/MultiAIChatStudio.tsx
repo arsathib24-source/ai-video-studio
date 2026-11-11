@@ -20,7 +20,8 @@ interface Message {
 }
 
 const MODELS = [
-  { id: 'gemini-2.0-flash', name: 'Google Gemini 2.0 Flash', provider: 'Google AI Studio', tag: 'Fast & Free' },
+  { id: 'gemini-3.1-flash-lite', name: 'Google Gemini Flash (Free)', provider: 'Google AI Studio', tag: 'Fast & Free' },
+  { id: 'gemini-3.5-flash-lite', name: 'Google Gemini 3.5 Flash', provider: 'Google AI Studio', tag: 'High Intelligence' },
   { id: 'deepseek-r1', name: 'DeepSeek-R1 (Reasoning)', provider: 'DeepSeek', tag: 'Super Smart' },
   { id: 'deepseek-chat', name: 'DeepSeek-V3', provider: 'DeepSeek', tag: 'Coding & General' },
   { id: 'gpt-4o', name: 'ChatGPT (GPT-4o)', provider: 'OpenAI', tag: 'Flagship' },
@@ -39,12 +40,12 @@ export const MultiAIChatStudio: React.FC<MultiAIChatStudioProps> = ({
   const [messages, setMessages] = useState<Message[]>([
     {
       role: 'assistant',
-      content: 'হ্যালো! আমি আপনার অল-ইন-ওয়ান AI চ্যাট অ্যাসিস্ট্যান্ট। আপনি যেকোনো সময় ওপরে ড্রপডাউন থেকে **ChatGPT**, **Claude**, **Gemini**, বা **DeepSeek** বেছে নিয়ে কথা বলতে পারেন। আজ আপনাকে কীভাবে সাহায্য করতে পারি?',
-      model: 'gemini-2.0-flash',
+      content: 'হ্যালো! আমি আপনার অল-ইন-ওয়ান AI চ্যাট অ্যাসিস্ট্যান্ট। আপনি যেকোনো সময় ওপরে ড্রপডাউন থেকে **Gemini**, **ChatGPT**, **Claude**, বা **DeepSeek** বেছে নিয়ে কথা বলতে পারেন। আজ আপনাকে কীভাবে সাহায্য করতে পারি?',
+      model: 'gemini-3.1-flash-lite',
     },
   ]);
   const [input, setInput] = useState(initialInput || '');
-  const [selectedModel, setSelectedModel] = useState('gemini-2.0-flash');
+  const [selectedModel, setSelectedModel] = useState('gemini-3.1-flash-lite');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [copiedIdx, setCopiedIdx] = useState<number | null>(null);

@@ -17,17 +17,14 @@ export interface ShortsScriptResponse {
 }
 
 const CANDIDATE_MODELS = [
-  'gemini-1.5-flash-latest',
-  'gemini-1.5-flash-8b',
-  'gemini-1.5-flash',
-  'gemini-2.0-flash',
-  'gemini-pro',
-  'gemini-1.5-pro-latest',
-  'gemini-1.5-pro',
+  'gemini-3.1-flash-lite',
+  'gemini-3.5-flash-lite',
+  'gemini-3.8-flash',
+  'gemini-flash-latest',
 ];
 
 export function getGeminiClient(customApiKey?: string) {
-  const apiKey = customApiKey || process.env.GEMINI_API_KEY;
+  const apiKey = (customApiKey && customApiKey !== 'server_configured') ? customApiKey : process.env.GEMINI_API_KEY;
   if (!apiKey) {
     throw new Error('Gemini API Key is missing. Please provide it in settings or .env.local file.');
   }

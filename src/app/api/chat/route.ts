@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const {
       messages,
-      model = 'gemini-2.0-flash',
+      model = 'gemini-3.1-flash-lite',
       geminiKey,
       openaiKey,
       claudeKey,
@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
 
     // 1. Google Gemini Models
     if (model.startsWith('gemini')) {
-      const apiKey = geminiKey || process.env.GEMINI_API_KEY;
+      const apiKey = (geminiKey && geminiKey !== 'server_configured') ? geminiKey : process.env.GEMINI_API_KEY;
       if (!apiKey) {
         return NextResponse.json(
           { error: 'Google Gemini API Key is required. Please set it in Settings.' },
@@ -35,14 +35,22 @@ export async function POST(req: NextRequest) {
       }
 
       const genAI = new GoogleGenerativeAI(apiKey);
+      
+      // Auto-fallback deprecated names to working active models
+      let requestedModel = model;
+      if (requestedModel === 'gemini-2.0-flash' || requestedModel === 'gemini-1.5-flash' || requestedModel === 'gemini-pro') {
+        requestedModel = 'gemini-3.1-flash-lite';
+      }
+
       const candidateModels = [
-        model,
-        'gemini-1.5-flash-latest',
-        'gemini-1.5-flash-8b',
-        'gemini-2.0-flash',
-        'gemini-pro',
+        requestedModel,
+        'gemini-3.1-flash-lite',
+        'gemini-3.5-flash-lite',
+        'gemini-3.8-flash',
+        'gemini-flash-latest',
       ];
 
+      let lastGeminiError = '';
       for (const mName of candidateModels) {
         try {
           const geminiModel = genAI.getGenerativeModel({ model: mName });
@@ -61,11 +69,12 @@ export async function POST(req: NextRequest) {
             reply,
           });
         } catch (err: any) {
-          console.warn(`[Chat] Gemini model ${mName} failed:`, err?.message);
+          lastGeminiError = err?.message || String(err);
+          console.warn(`[Chat] Gemini model ${mName} failed:`, lastGeminiError);
         }
       }
 
-      throw new Error('All Gemini model candidates failed with this API key.');
+      throw new Error(`All Gemini model candidates failed: ${lastGeminiError}`);
     }
 
     // 2. OpenAI (ChatGPT - GPT-4o / GPT-4o-mini / o1)
