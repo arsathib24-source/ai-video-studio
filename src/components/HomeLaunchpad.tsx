@@ -577,129 +577,180 @@ export const HomeLaunchpad: React.FC<HomeLaunchpadProps> = ({
       {/* ========================================================
           2. SECONDARY STUDIO MODULES & NEURAL VOICE SAMPLER
          ======================================================== */}
-      <section className="space-y-4">
-        <div className="flex items-center justify-between">
-          <h2 className="text-base sm:text-lg font-black text-white flex items-center gap-2">
-            <Sparkles className="w-4 h-4 text-purple-400" />
-            <span>AI Creative Modules (অল-ইন-ওয়ান স্টুডিও)</span>
-          </h2>
-          <span className="text-xs text-slate-500 font-semibold">৪টি মূল ক্রিয়েটিভ ইঞ্জিন</span>
+      <section className="space-y-5">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-1">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-2xl bg-gradient-to-tr from-purple-500/20 via-pink-500/20 to-indigo-500/20 border border-purple-500/40 flex items-center justify-center text-purple-400 shadow-[0_0_18px_rgba(168,85,247,0.3)]">
+              <Sparkles className="w-4 h-4 animate-pulse" />
+            </div>
+            <div>
+              <h2 className="text-base sm:text-lg font-black text-white flex items-center gap-2">
+                <span>AI Creative Modules</span>
+                <span className="text-xs font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-400 via-purple-300 to-cyan-300">
+                  (অল-ইন-ওয়ান স্টুডিও)
+                </span>
+              </h2>
+              <p className="text-[11px] text-slate-400">
+                এক ক্লিকেই ভিডিও, ছবি, এআই অবতার এবং মাল্টি-এলএলএম ব্রেন পাওয়ার
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 self-start sm:self-auto px-3.5 py-1.5 rounded-full bg-slate-900/90 border border-slate-800 text-[11px] font-bold text-slate-300 shadow-sm">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_#34d399] animate-pulse"></span>
+            <span>৪টি মূল ক্রিয়েটিভ ইঞ্জিন সক্রিয়</span>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {/* Card 1: Video & Auto Shorts */}
           <div
             onClick={() => onSelectStudio('videos', { subTab: 'shorts' })}
-            className="group cursor-pointer rounded-2xl bg-[#0b101e] hover:bg-[#11182c] border border-slate-800/80 hover:border-pink-500/50 p-5 transition-all duration-300 hover:-translate-y-1 shadow-lg flex flex-col justify-between"
+            className="group relative cursor-pointer rounded-2xl bg-gradient-to-b from-[#0f172a]/95 via-[#0c1222]/90 to-[#070b16]/95 hover:from-[#141b33] hover:to-[#0a0f1e] border border-slate-800/80 hover:border-pink-500/60 p-5 transition-all duration-300 hover:-translate-y-1.5 shadow-xl hover:shadow-[0_12px_35px_-10px_rgba(236,72,153,0.35)] flex flex-col justify-between overflow-hidden"
           >
+            {/* Top accent beam on hover */}
+            <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-pink-500 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+            
             <div>
               <div className="flex items-center justify-between mb-4">
-                <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-pink-600 via-rose-600 to-indigo-600 flex items-center justify-center text-white shadow-lg group-hover:scale-110 transition duration-300">
-                  <Film className="w-5 h-5" />
+                <div className="relative">
+                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-tr from-pink-600 via-rose-500 to-indigo-500 blur-md opacity-40 group-hover:opacity-90 group-hover:scale-110 transition-all duration-300"></div>
+                  <div className="relative z-10 w-12 h-12 rounded-2xl bg-gradient-to-br from-pink-500 via-rose-600 to-indigo-600 border border-white/20 flex items-center justify-center text-white shadow-lg group-hover:scale-105 group-hover:rotate-[-3deg] transition-transform duration-300">
+                    <Film className="w-5 h-5 drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]" />
+                  </div>
                 </div>
-                <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-pink-500/10 border border-pink-500/30 text-pink-300">
-                  Viral 9:16
+                <span className="text-[10px] font-extrabold uppercase tracking-wider px-2.5 py-1 rounded-full bg-pink-500/10 border border-pink-500/30 text-pink-300 flex items-center gap-1.5 shadow-[0_0_12px_rgba(236,72,153,0.15)] group-hover:border-pink-500/50">
+                  <span className="w-1.5 h-1.5 rounded-full bg-pink-400 animate-pulse"></span>
+                  <span>VIRAL 9:16</span>
                 </span>
               </div>
 
-              <h3 className="text-sm sm:text-base font-black text-white group-hover:text-pink-300 transition">
+              <h3 className="text-base font-black text-white group-hover:bg-gradient-to-r group-hover:from-pink-300 group-hover:via-rose-200 group-hover:to-white group-hover:bg-clip-text group-hover:text-transparent transition-all duration-300">
                 Auto Shorts Studio
               </h3>
-              <p className="text-xs text-slate-400 mt-1.5 leading-relaxed">
-                বাংলা ভয়েসওভার ও ৪K সিনেমাটিক ফুটেজ সহ স্বয়ংক্রিয় রিলস।
+              <p className="text-xs text-slate-400 group-hover:text-slate-300 mt-2 leading-relaxed transition-colors">
+                স্বয়ংক্রিয় রিলস, <span className="text-pink-300/90 font-medium">বাংলা ভয়েসওভার</span> ও <span className="text-slate-200 font-medium">8K সিনেমাটিক ফুটেজ</span> সহ।
               </p>
             </div>
 
-            <div className="pt-3 mt-3 border-t border-slate-800/60 flex items-center justify-between text-xs font-bold text-pink-400">
-              <span>Open Studio</span>
-              <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition" />
+            <div className="pt-3.5 mt-4 border-t border-slate-800/80 flex items-center justify-between text-xs font-bold text-pink-400 group-hover:text-pink-300 transition-colors">
+              <span className="tracking-wide">Open Studio</span>
+              <div className="w-6 h-6 rounded-full bg-pink-500/10 group-hover:bg-pink-500 group-hover:text-white flex items-center justify-center transition-all duration-300 group-hover:scale-110">
+                <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+              </div>
             </div>
           </div>
 
           {/* Card 2: 8K Image Studio */}
           <div
             onClick={() => onSelectStudio('images')}
-            className="group cursor-pointer rounded-2xl bg-[#0b101e] hover:bg-[#11182c] border border-slate-800/80 hover:border-emerald-500/50 p-5 transition-all duration-300 hover:-translate-y-1 shadow-lg flex flex-col justify-between"
+            className="group relative cursor-pointer rounded-2xl bg-gradient-to-b from-[#0f172a]/95 via-[#0c1222]/90 to-[#070b16]/95 hover:from-[#0e1d27] hover:to-[#071317] border border-slate-800/80 hover:border-emerald-500/60 p-5 transition-all duration-300 hover:-translate-y-1.5 shadow-xl hover:shadow-[0_12px_35px_-10px_rgba(16,185,129,0.35)] flex flex-col justify-between overflow-hidden"
           >
+            {/* Top accent beam on hover */}
+            <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-emerald-500 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+
             <div>
               <div className="flex items-center justify-between mb-4">
-                <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-500 flex items-center justify-center text-white shadow-lg group-hover:scale-110 transition duration-300">
-                  <ImageIcon className="w-5 h-5" />
+                <div className="relative">
+                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-tr from-emerald-600 via-teal-500 to-cyan-500 blur-md opacity-40 group-hover:opacity-90 group-hover:scale-110 transition-all duration-300"></div>
+                  <div className="relative z-10 w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-500 via-teal-600 to-cyan-600 border border-white/20 flex items-center justify-center text-white shadow-lg group-hover:scale-105 group-hover:rotate-[-3deg] transition-transform duration-300">
+                    <ImageIcon className="w-5 h-5 drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]" />
+                  </div>
                 </div>
-                <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-300">
-                  100% Free 8K
+                <span className="text-[10px] font-extrabold uppercase tracking-wider px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 flex items-center gap-1.5 shadow-[0_0_12px_rgba(16,185,129,0.15)] group-hover:border-emerald-500/50">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                  <span>100% FREE 8K</span>
                 </span>
               </div>
 
-              <h3 className="text-sm sm:text-base font-black text-white group-hover:text-emerald-300 transition">
+              <h3 className="text-base font-black text-white group-hover:bg-gradient-to-r group-hover:from-emerald-300 group-hover:via-teal-200 group-hover:to-white group-hover:bg-clip-text group-hover:text-transparent transition-all duration-300">
                 8K Image Studio
               </h3>
-              <p className="text-xs text-slate-400 mt-1.5 leading-relaxed">
-                FLUX.1 ফটোরিয়ালিস্টিক, ৩D রেন্ডার ও অ্যানিমে ছবি।
+              <p className="text-xs text-slate-400 group-hover:text-slate-300 mt-2 leading-relaxed transition-colors">
+                <span className="text-emerald-300/90 font-medium">FLUX.1 ফটোরিয়ালিস্টিক</span>, ৩D রেন্ডার ও অ্যানিমে স্টাইল আর্টওয়ার্ক।
               </p>
             </div>
 
-            <div className="pt-3 mt-3 border-t border-slate-800/60 flex items-center justify-between text-xs font-bold text-emerald-400">
-              <span>Open Studio</span>
-              <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition" />
+            <div className="pt-3.5 mt-4 border-t border-slate-800/80 flex items-center justify-between text-xs font-bold text-emerald-400 group-hover:text-emerald-300 transition-colors">
+              <span className="tracking-wide">Open Studio</span>
+              <div className="w-6 h-6 rounded-full bg-emerald-500/10 group-hover:bg-emerald-500 group-hover:text-white flex items-center justify-center transition-all duration-300 group-hover:scale-110">
+                <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+              </div>
             </div>
           </div>
 
           {/* Card 3: Talking Avatar */}
           <div
             onClick={() => onSelectStudio('videos', { subTab: 'avatar' })}
-            className="group cursor-pointer rounded-2xl bg-[#0b101e] hover:bg-[#11182c] border border-slate-800/80 hover:border-purple-500/50 p-5 transition-all duration-300 hover:-translate-y-1 shadow-lg flex flex-col justify-between"
+            className="group relative cursor-pointer rounded-2xl bg-gradient-to-b from-[#0f172a]/95 via-[#0c1222]/90 to-[#070b16]/95 hover:from-[#1b122f] hover:to-[#0c0819] border border-slate-800/80 hover:border-purple-500/60 p-5 transition-all duration-300 hover:-translate-y-1.5 shadow-xl hover:shadow-[0_12px_35px_-10px_rgba(168,85,247,0.35)] flex flex-col justify-between overflow-hidden"
           >
+            {/* Top accent beam on hover */}
+            <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-purple-500 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+
             <div>
               <div className="flex items-center justify-between mb-4">
-                <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-purple-600 to-indigo-500 flex items-center justify-center text-white shadow-lg group-hover:scale-110 transition duration-300">
-                  <UserCheck className="w-5 h-5" />
+                <div className="relative">
+                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-tr from-purple-600 via-indigo-600 to-pink-500 blur-md opacity-40 group-hover:opacity-90 group-hover:scale-110 transition-all duration-300"></div>
+                  <div className="relative z-10 w-12 h-12 rounded-2xl bg-gradient-to-br from-purple-500 via-indigo-600 to-pink-600 border border-white/20 flex items-center justify-center text-white shadow-lg group-hover:scale-105 group-hover:rotate-[-3deg] transition-transform duration-300">
+                    <UserCheck className="w-5 h-5 drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]" />
+                  </div>
                 </div>
-                <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-purple-500/10 border border-purple-500/30 text-purple-300">
-                  Lip-Sync AI
+                <span className="text-[10px] font-extrabold uppercase tracking-wider px-2.5 py-1 rounded-full bg-purple-500/10 border border-purple-500/30 text-purple-300 flex items-center gap-1.5 shadow-[0_0_12px_rgba(168,85,247,0.15)] group-hover:border-purple-500/50">
+                  <span className="w-1.5 h-1.5 rounded-full bg-purple-400 animate-pulse"></span>
+                  <span>LIP-SYNC AI</span>
                 </span>
               </div>
 
-              <h3 className="text-sm sm:text-base font-black text-white group-hover:text-purple-300 transition">
+              <h3 className="text-base font-black text-white group-hover:bg-gradient-to-r group-hover:from-purple-300 group-hover:via-pink-200 group-hover:to-white group-hover:bg-clip-text group-hover:text-transparent transition-all duration-300">
                 Talking Avatar Studio
               </h3>
-              <p className="text-xs text-slate-400 mt-1.5 leading-relaxed">
-                মানুষের যেকোনো ছবি দিয়ে নিখুঁত কথা বলানো ভিডিও।
+              <p className="text-xs text-slate-400 group-hover:text-slate-300 mt-2 leading-relaxed transition-colors">
+                স্থির ছবি থেকে <span className="text-purple-300/90 font-medium">নিখুঁত লিপ-সিঙ্ক</span> সহ জীবন্ত কথা বলানো ভিডিও।
               </p>
             </div>
 
-            <div className="pt-3 mt-3 border-t border-slate-800/60 flex items-center justify-between text-xs font-bold text-purple-400">
-              <span>Open Studio</span>
-              <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition" />
+            <div className="pt-3.5 mt-4 border-t border-slate-800/80 flex items-center justify-between text-xs font-bold text-purple-400 group-hover:text-purple-300 transition-colors">
+              <span className="tracking-wide">Open Studio</span>
+              <div className="w-6 h-6 rounded-full bg-purple-500/10 group-hover:bg-purple-500 group-hover:text-white flex items-center justify-center transition-all duration-300 group-hover:scale-110">
+                <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+              </div>
             </div>
           </div>
 
           {/* Card 4: Multi-AI Chat */}
           <div
             onClick={() => onSelectStudio('chat')}
-            className="group cursor-pointer rounded-2xl bg-[#0b101e] hover:bg-[#11182c] border border-slate-800/80 hover:border-indigo-500/50 p-5 transition-all duration-300 hover:-translate-y-1 shadow-lg flex flex-col justify-between"
+            className="group relative cursor-pointer rounded-2xl bg-gradient-to-b from-[#0f172a]/95 via-[#0c1222]/90 to-[#070b16]/95 hover:from-[#101b33] hover:to-[#070e1e] border border-slate-800/80 hover:border-cyan-500/60 p-5 transition-all duration-300 hover:-translate-y-1.5 shadow-xl hover:shadow-[0_12px_35px_-10px_rgba(6,182,212,0.35)] flex flex-col justify-between overflow-hidden"
           >
+            {/* Top accent beam on hover */}
+            <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-cyan-500 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+
             <div>
               <div className="flex items-center justify-between mb-4">
-                <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-indigo-600 to-blue-500 flex items-center justify-center text-white shadow-lg group-hover:scale-110 transition duration-300">
-                  <MessageSquare className="w-5 h-5" />
+                <div className="relative">
+                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-tr from-cyan-500 via-blue-600 to-indigo-600 blur-md opacity-40 group-hover:opacity-90 group-hover:scale-110 transition-all duration-300"></div>
+                  <div className="relative z-10 w-12 h-12 rounded-2xl bg-gradient-to-br from-cyan-500 via-blue-600 to-indigo-600 border border-white/20 flex items-center justify-center text-white shadow-lg group-hover:scale-105 group-hover:rotate-[-3deg] transition-transform duration-300">
+                    <MessageSquare className="w-5 h-5 drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]" />
+                  </div>
                 </div>
-                <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-300">
-                  Multi-LLM
+                <span className="text-[10px] font-extrabold uppercase tracking-wider px-2.5 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 flex items-center gap-1.5 shadow-[0_0_12px_rgba(6,182,212,0.15)] group-hover:border-cyan-500/50">
+                  <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
+                  <span>MULTI-LLM</span>
                 </span>
               </div>
 
-              <h3 className="text-sm sm:text-base font-black text-white group-hover:text-indigo-300 transition">
+              <h3 className="text-base font-black text-white group-hover:bg-gradient-to-r group-hover:from-cyan-300 group-hover:via-blue-200 group-hover:to-white group-hover:bg-clip-text group-hover:text-transparent transition-all duration-300">
                 Multi-AI Chat Hub
               </h3>
-              <p className="text-xs text-slate-400 mt-1.5 leading-relaxed">
-                GPT-4o, Claude 3.5 ও DeepSeek-R1 দিয়ে জটিল রিসার্চ।
+              <p className="text-xs text-slate-400 group-hover:text-slate-300 mt-2 leading-relaxed transition-colors">
+                <span className="text-cyan-300/90 font-medium">GPT-4o, Claude 3.5</span> ও <span className="text-blue-300/90 font-medium">DeepSeek-R1</span> দিয়ে গভীর ক্রিয়েটিভ রিসার্চ।
               </p>
             </div>
 
-            <div className="pt-3 mt-3 border-t border-slate-800/60 flex items-center justify-between text-xs font-bold text-indigo-400">
-              <span>Open Studio</span>
-              <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition" />
+            <div className="pt-3.5 mt-4 border-t border-slate-800/80 flex items-center justify-between text-xs font-bold text-cyan-400 group-hover:text-cyan-300 transition-colors">
+              <span className="tracking-wide">Open Studio</span>
+              <div className="w-6 h-6 rounded-full bg-cyan-500/10 group-hover:bg-cyan-500 group-hover:text-white flex items-center justify-center transition-all duration-300 group-hover:scale-110">
+                <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+              </div>
             </div>
           </div>
         </div>
@@ -708,62 +759,99 @@ export const HomeLaunchpad: React.FC<HomeLaunchpadProps> = ({
       {/* ========================================================
           3. SLEEK NEURAL VOICEOVER SAMPLER
          ======================================================== */}
-      <section className="rounded-3xl bg-[#0a0e1c] border border-slate-800/80 p-5 sm:p-6 shadow-xl">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
-          <div>
-            <h3 className="text-base font-black text-white flex items-center gap-2">
-              <Volume2 className="w-4 h-4 text-cyan-400" />
-              <span>Neural Voiceover Sampler</span>
-            </h3>
-            <p className="text-xs text-slate-400 mt-0.5">
-              ক্লিক করে সরাসরি বাংলা ও ইংরেজি প্রাকৃতিক কণ্ঠের নমুনা শুনুন
-            </p>
+      <section className="relative overflow-hidden rounded-3xl bg-gradient-to-b from-[#0d1428]/95 via-[#090e1c]/95 to-[#050811] border border-slate-800/80 p-5 sm:p-7 shadow-2xl">
+        {/* Subtle ambient lighting */}
+        <div className="absolute top-0 right-1/4 w-72 h-72 bg-cyan-500/5 rounded-full blur-[90px] pointer-events-none"></div>
+        <div className="absolute bottom-0 left-1/4 w-72 h-72 bg-purple-500/5 rounded-full blur-[90px] pointer-events-none"></div>
+
+        <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-2xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 shadow-[0_0_20px_rgba(6,182,212,0.2)]">
+              <Volume2 className="w-5 h-5 animate-pulse" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <h3 className="text-base sm:text-lg font-black text-white">
+                  Neural Voiceover Sampler
+                </h3>
+                <span className="hidden sm:inline-flex items-center gap-1.5 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-300">
+                  <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
+                  Natural AI TTS
+                </span>
+              </div>
+              <p className="text-xs text-slate-400 mt-0.5">
+                ক্লিক করে সরাসরি বাংলা ও ইংরেজি প্রাকৃতিক কণ্ঠের জীবন্ত অডিও নমুনা শুনুন
+              </p>
+            </div>
           </div>
 
           <button
             onClick={() => setIsTTSOpen(true)}
-            className="self-start sm:self-auto px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-white transition flex items-center gap-1.5"
+            className="self-start sm:self-auto px-4 py-2.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-slate-700/80 hover:border-cyan-500/50 text-xs font-bold text-white transition-all duration-300 flex items-center gap-2 shadow-lg hover:shadow-cyan-500/10"
           >
+            <Mic className="w-3.5 h-3.5 text-cyan-400" />
             <span>Open Voiceover Studio</span>
-            <ChevronRight className="w-3.5 h-3.5" />
+            <ChevronRight className="w-3.5 h-3.5 text-slate-400 group-hover:translate-x-0.5 transition-transform" />
           </button>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+        <div className="relative z-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
           {[
-            { id: 'bn-pradeep', name: 'প্রদীপ (Pradeep)', lang: 'বাংলা', gender: 'পুরুষ (স্পষ্ট ও উদ্যমী)' },
-            { id: 'bn-nabanita', name: 'নবনিতা (Nabanita)', lang: 'বাংলা', gender: 'নারী (গল্প ও আবেগপ্রবণ)' },
-            { id: 'en-christopher', name: 'Christopher', lang: 'English', gender: 'Male (Deep Cinematic)' },
-            { id: 'en-jenny', name: 'Jenny', lang: 'English', gender: 'Female (Modern & Friendly)' },
+            { id: 'bn-pradeep', name: 'প্রদীপ (Pradeep)', lang: 'বাংলা', tone: 'পুরুষ • স্পষ্ট ও উদ্যমী' },
+            { id: 'bn-nabanita', name: 'নবনিতা (Nabanita)', lang: 'বাংলা', tone: 'নারী • গল্প ও আবেগপ্রবণ' },
+            { id: 'en-christopher', name: 'Christopher', lang: 'English', tone: 'Male • Deep Cinematic' },
+            { id: 'en-jenny', name: 'Jenny', lang: 'English', tone: 'Female • Modern & Friendly' },
           ].map((v) => {
             const isPlaying = playingVoice === v.id;
             return (
               <div
                 key={v.id}
-                className={`p-3.5 rounded-2xl border transition ${
+                className={`group relative p-4 rounded-2xl border transition-all duration-300 flex flex-col justify-between ${
                   isPlaying
-                    ? 'bg-blue-950/40 border-blue-500/60 shadow'
-                    : 'bg-[#0d1222] border-slate-800/80 hover:border-slate-700'
+                    ? 'bg-gradient-to-b from-[#141b38] to-[#0a1024] border-cyan-400/80 shadow-[0_0_25px_rgba(6,182,212,0.25)] scale-[1.02]'
+                    : 'bg-[#0b1021]/80 hover:bg-[#101730]/90 border-slate-800/80 hover:border-slate-700/90 shadow-md'
                 }`}
               >
-                <div className="text-[10px] font-bold text-slate-400 mb-1">{v.lang}</div>
-                <div className="text-xs font-extrabold text-white">{v.name}</div>
-                <div className="text-[11px] text-slate-400 mt-0.5">{v.gender}</div>
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-md bg-slate-800/90 border border-slate-700/60 text-slate-300 flex items-center gap-1.5">
+                      <span className={`w-1.5 h-1.5 rounded-full ${v.lang === 'বাংলা' ? 'bg-emerald-400' : 'bg-cyan-400'}`}></span>
+                      {v.lang}
+                    </span>
+                    {isPlaying && (
+                      <div className="flex items-end gap-0.5 h-3 px-1.5 py-0.5 rounded bg-cyan-500/10">
+                        <span className="w-1 h-3 bg-cyan-400 rounded-full animate-bounce"></span>
+                        <span className="w-1 h-2 bg-pink-400 rounded-full animate-bounce [animation-delay:0.15s]"></span>
+                        <span className="w-1 h-3.5 bg-purple-400 rounded-full animate-bounce [animation-delay:0.3s]"></span>
+                        <span className="w-1 h-1.5 bg-emerald-400 rounded-full animate-bounce [animation-delay:0.2s]"></span>
+                      </div>
+                    )}
+                  </div>
+                  
+                  <div className="text-sm font-black text-white group-hover:text-cyan-300 transition-colors">
+                    {v.name}
+                  </div>
+                  <div className="text-[11px] text-slate-400 mt-0.5 font-medium">
+                    {v.tone}
+                  </div>
+                </div>
 
                 <button
                   onClick={() => handleVoicePlay(v.id)}
-                  className={`w-full mt-3 py-1.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition ${
-                    isPlaying ? 'bg-rose-600 text-white' : 'bg-slate-800 hover:bg-slate-700 text-slate-200'
+                  className={`w-full mt-3.5 py-2 px-3 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-all duration-300 shadow ${
+                    isPlaying
+                      ? 'bg-gradient-to-r from-rose-500 to-pink-600 text-white shadow-[0_0_15px_rgba(244,63,94,0.4)] hover:brightness-110'
+                      : 'bg-slate-800/90 hover:bg-slate-700/90 text-slate-200 hover:text-white border border-slate-700/60 hover:border-cyan-500/40'
                   }`}
                 >
                   {isPlaying ? (
                     <>
-                      <Pause className="w-3 h-3" />
-                      <span>Stop</span>
+                      <Pause className="w-3.5 h-3.5" />
+                      <span>Stop Audio</span>
                     </>
                   ) : (
                     <>
-                      <Play className="w-3 h-3 fill-current" />
+                      <Play className="w-3.5 h-3.5 fill-current text-cyan-400 group-hover:scale-110 transition-transform" />
                       <span>Play Sample</span>
                     </>
                   )}
