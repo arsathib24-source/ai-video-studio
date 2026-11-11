@@ -4,8 +4,6 @@ import React, { useState, useEffect } from 'react';
 import { MainNavTab } from './Sidebar';
 import {
   Search,
-  SlidersHorizontal,
-  Bell,
   Sparkles,
   ArrowRight,
   MessageSquare,
@@ -27,14 +25,10 @@ import {
   Pause,
   Flame,
   UserCheck,
-  Layers,
   BookOpen,
   Bot,
-  Compass,
-  CheckCircle2,
-  Activity,
-  Send,
-  Wand2,
+  SlidersHorizontal,
+  Key,
 } from 'lucide-react';
 import { QuickTTSModal } from './QuickTTSModal';
 import { QuickVoiceToTextModal } from './QuickVoiceToTextModal';
@@ -57,739 +51,398 @@ export const HomeLaunchpad: React.FC<HomeLaunchpadProps> = ({
   onOpenWelcome,
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
-  const [activeCategory, setActiveCategory] = useState<'all' | 'media' | 'content' | 'voice' | 'agents'>('all');
   const [activeBottomNav, setActiveBottomNav] = useState<'home' | 'tools' | 'history' | 'saved'>('home');
   const [isTTSOpen, setIsTTSOpen] = useState(false);
   const [isSTTOpen, setIsSTTOpen] = useState(false);
 
-  // Creative Omnibar Prompt state
-  const [omnibarPrompt, setOmnibarPrompt] = useState('');
-  const [copyToast, setCopyToast] = useState<string | null>(null);
+  // Creative Prompt Omnibar
+  const [promptText, setPromptText] = useState('');
+  const [copiedId, setCopiedId] = useState<string | null>(null);
 
-  // Voice Sampler State
-  const [activePlayingVoice, setActivePlayingVoice] = useState<string | null>(null);
+  // Voice Sampler
+  const [playingVoice, setPlayingVoice] = useState<string | null>(null);
 
-  // Dynamic Greeting based on client time
-  const [greeting, setGreeting] = useState('Assalamu Alaikum');
-  useEffect(() => {
-    const hour = new Date().getHours();
-    if (hour < 12) setGreeting('শুভ সকাল, Assalamu Alaikum');
-    else if (hour < 17) setGreeting('শুভ দুপুর, Assalamu Alaikum');
-    else setGreeting('শুভ সন্ধ্যা, Assalamu Alaikum');
-  }, []);
-
-  // Quick Prompt Chips for Omnibar
-  const quickPrompts = [
-    { label: '🎬 ব্ল্যাকহোলের অজানা ৫টি তথ্য', studio: 'videos' as MainNavTab, subTab: 'shorts' as const, prompt: 'রহস্যময় ব্ল্যাকহোলের অজানা ৫টি বিস্ময়কর তথ্য' },
-    { label: '🌅 শান্ত গ্রামীণ বাংলা সূর্যাস্ত ৮K', studio: 'images' as MainNavTab, prompt: 'A serene traditional Bangladeshi village during golden sunset, river reflection, lush greenery, realistic 8k' },
-    { label: '🚀 Cyberpunk Dhaka 2099', studio: 'images' as MainNavTab, prompt: 'Futuristic Cyberpunk Dhaka city 2099, neon holographic signs, flying cars, rain reflection, cinematic 8k' },
-    { label: '📱 Viral Motivation Reel', studio: 'videos' as MainNavTab, subTab: 'shorts' as const, prompt: 'সফল হওয়ার ৩টি গোপন বৈজ্ঞানিক মানসিক সূত্র যা জীবন বদলে দেবে' },
-    { label: '🗣️ AI News Anchor Avatar', studio: 'videos' as MainNavTab, subTab: 'avatar' as const, prompt: 'স্বাগতম আজকের প্রধান প্রযুক্তি সংবাদে, AI এখন নতুন বিপ্লব সৃষ্টি করেছে।' },
-    { label: '🧠 DeepSeek Reasoning Hub', studio: 'chat' as MainNavTab, prompt: 'Explain quantum computing in simple Bengali with practical analogies' },
+  const quickIdeas = [
+    { label: '🎬 ব্ল্যাকহোলের অজানা ৫টি তথ্য', studio: 'videos' as MainNavTab, subTab: 'shorts' as const, prompt: 'রহস্যময় ব্ল্যাকহোলের অজানা ৫টি তথ্য' },
+    { label: '🌅 শান্ত গ্রামীণ বাংলা সূর্যাস্ত ৮K', studio: 'images' as MainNavTab, prompt: 'A peaceful rural Bangladeshi village at sunset, golden light, river reflection, 8k realistic' },
+    { label: '🚀 Cyberpunk Dhaka 2099', studio: 'images' as MainNavTab, prompt: 'Cyberpunk Dhaka city in year 2099, neon holograms, flying vehicles, rainy night, 8k cinematic' },
+    { label: '📱 Viral Motivation Reel', studio: 'videos' as MainNavTab, subTab: 'shorts' as const, prompt: 'সফল হওয়ার ৩টি গোপন বৈজ্ঞানিক সূত্র যা আপনার জীবন বদলে দেবে' },
+    { label: '🗣️ AI News Anchor', studio: 'videos' as MainNavTab, subTab: 'avatar' as const, prompt: 'আজকের প্রধান আন্তর্জাতিক প্রযুক্তি সংবাদে আপনাদের স্বাগতম।' },
   ];
 
-  // 8 Comprehensive Studio Tools with rich badges and descriptions
-  const tools = [
-    {
-      id: 'videos',
-      type: 'studio',
-      targetTab: 'videos' as MainNavTab,
-      subTab: 'shorts' as const,
-      category: 'media',
-      title: 'Video & Auto Shorts',
-      subtitle: 'Viral 9:16 Reels & Shorts',
-      desktopDesc: 'স্বয়ংক্রিয় বাংলা ভয়েসওভার, ডায়নামিক সাবটাইটেল এবং ৪K ফুটেজ সহ ১-ক্লিকে রেডি-টু-পোস্ট ৯:১৬ রিলস তৈরি।',
-      icon: Film,
-      iconBg: 'bg-gradient-to-tr from-rose-600 to-pink-500',
-      iconColor: 'text-white',
-      badge: 'Viral Auto 9:16',
-      badgeColor: 'border-rose-500/30 text-rose-300 bg-rose-500/10',
-      popular: true,
-    },
-    {
-      id: 'images',
-      type: 'studio',
-      targetTab: 'images' as MainNavTab,
-      category: 'media',
-      title: '8K Image Generator',
-      subtitle: 'FLUX.1 Photorealistic AI',
-      desktopDesc: 'FLUX.1 মডেল দিয়ে যেকোনো প্রম্পট থেকে আল্ট্রা-ডিটেইলড ফটোরিয়ালিস্টিক, ৩D রেন্ডার, কার্টুন ও অ্যানিমে ছবি।',
-      icon: ImageIcon,
-      iconBg: 'bg-gradient-to-tr from-emerald-600 to-teal-500',
-      iconColor: 'text-white',
-      badge: '100% Free 8K',
-      badgeColor: 'border-emerald-500/30 text-emerald-300 bg-emerald-500/10',
-      popular: true,
-    },
-    {
-      id: 'avatar',
-      type: 'studio',
-      targetTab: 'videos' as MainNavTab,
-      subTab: 'avatar' as const,
-      category: 'media',
-      title: 'Talking Avatar Studio',
-      subtitle: 'Photo & Voice Lip-Sync',
-      desktopDesc: 'মানুষের যেকোনো ছবি ও অডিও/স্ক্রিপ্ট আপলোড করে নিখুঁত লিপ-সিঙ্ক সহ জীবন্ত উপস্থাপক ভিডিও জেনারেশন।',
-      icon: UserCheck,
-      iconBg: 'bg-gradient-to-tr from-purple-600 to-indigo-500',
-      iconColor: 'text-white',
-      badge: 'Real Lip-Sync',
-      badgeColor: 'border-purple-500/30 text-purple-300 bg-purple-500/10',
-      popular: true,
-    },
-    {
-      id: 'chat',
-      type: 'studio',
-      targetTab: 'chat' as MainNavTab,
-      category: 'content',
-      title: 'Multi-AI Reasoning Hub',
-      subtitle: 'GPT-4o, Claude & DeepSeek',
-      desktopDesc: 'Gemini 2.0 Flash, DeepSeek-R1, Claude 3.5 Sonnet এবং ChatGPT-4o দিয়ে যেকোনো জটিল প্রশ্ন ও কোডিং সমাধান।',
-      icon: MessageSquare,
-      iconBg: 'bg-gradient-to-tr from-indigo-600 to-blue-500',
-      iconColor: 'text-white',
-      badge: 'Multi-LLM 2.0',
-      badgeColor: 'border-indigo-500/30 text-indigo-300 bg-indigo-500/10',
-      popular: true,
-    },
-    {
-      id: 'tts',
-      type: 'modal',
-      category: 'voice',
-      title: 'Neural Text-to-Speech',
-      subtitle: 'Bangla & English Voices',
-      desktopDesc: 'প্রদীপ ও নবনিতা সহ প্রাকৃতিক বাংলা এবং ক্রিস্টোফার ও জেনির স্টুডিও-কোয়ালিটি আল্ট্রা-ন্যাচারাল ভয়েস সিন্থেসিস।',
-      icon: Volume2,
-      iconBg: 'bg-gradient-to-tr from-blue-600 to-cyan-500',
-      iconColor: 'text-white',
-      badge: 'Neural Voice',
-      badgeColor: 'border-blue-500/30 text-blue-300 bg-blue-500/10',
-      popular: false,
-    },
-    {
-      id: 'stt',
-      type: 'modal',
-      category: 'voice',
-      title: 'Live Voice-to-Text',
-      subtitle: 'Microphone Transcription',
-      desktopDesc: 'লাইভ মাইক্রোফোন স্পিচ রিকগনিশন—মুখে কথা বললেই সরাসরি নির্ভুল বাংলা ও ইংরেজি টেক্সটে রূপান্তরিত হবে।',
-      icon: Mic,
-      iconBg: 'bg-gradient-to-tr from-amber-600 to-orange-500',
-      iconColor: 'text-white',
-      badge: 'Speech to Text',
-      badgeColor: 'border-amber-500/30 text-amber-300 bg-amber-500/10',
-      popular: false,
-    },
-    {
-      id: 'agents',
-      type: 'studio',
-      targetTab: 'agents' as MainNavTab,
-      category: 'agents',
-      title: 'Autonomous AI Agents',
-      subtitle: 'Self-Driving Agents',
-      desktopDesc: 'কাস্টম এআই এজেন্ট তৈরি করুন যা নিজে নিজে ইন্টারনেট রিসার্চ, কন্টেন্ট প্ল্যানিং ও টাস্ক এক্সিকিউট করে।',
-      icon: Bot,
-      iconBg: 'bg-gradient-to-tr from-fuchsia-600 to-purple-600',
-      iconColor: 'text-white',
-      badge: 'Auto Agent',
-      badgeColor: 'border-fuchsia-500/30 text-fuchsia-300 bg-fuchsia-500/10',
-      popular: false,
-    },
-    {
-      id: 'notebook',
-      type: 'studio',
-      targetTab: 'notebook' as MainNavTab,
-      category: 'content',
-      title: 'Smart Research Notebook',
-      subtitle: 'Document & PDF Intelligence',
-      desktopDesc: 'বই, নোট ও আর্টিকেল আপলোড করে পুরো বিষয়ের সারসংক্ষেপ, পয়েন্টভিত্তিক নোট এবং অটো অডিও পডকাস্ট তৈরি।',
-      icon: BookOpen,
-      iconBg: 'bg-gradient-to-tr from-violet-600 to-slate-700',
-      iconColor: 'text-white',
-      badge: 'Document AI',
-      badgeColor: 'border-violet-500/30 text-violet-300 bg-violet-500/10',
-      popular: false,
-    },
-  ];
-
-  // Voice Sampler Data
   const sampleVoices = [
-    {
-      id: 'bn-BD-PradeepNeural',
-      name: 'Pradeep Neural',
-      lang: 'বাংলা (বাংলাদেশ)',
-      gender: 'পুরুষ (স্পষ্ট ও উদ্যমী কণ্ঠ)',
-      tag: 'Viral Reels',
-      sampleText: 'আসসালামু আলাইকুম, AI ভিডিও স্টুডিওতে স্বাগতম। যেকোনো বিষয়ের আকর্ষণীয় রিলস এখন মুহূর্তেই তৈরি করুন।',
-    },
-    {
-      id: 'bn-BD-NabanitaNeural',
-      name: 'Nabanita Neural',
-      lang: 'বাংলা (বাংলাদেশ)',
-      gender: 'নারী (গল্প ও ডকুমেন্টারি)',
-      tag: 'Storytelling',
-      sampleText: 'আজকের এই বিশেষ পর্বে আমরা আলোচনা করব ভবিষ্যতের সবচেয়ে চমকপ্রদ কৃত্রিম বুদ্ধিমত্তা নিয়ে।',
-    },
-    {
-      id: 'en-US-ChristopherNeural',
-      name: 'Christopher',
-      lang: 'English (US/UK)',
-      gender: 'Male (Deep Cinematic)',
-      tag: 'Cinematic Voice',
-      sampleText: 'Deep inside the cosmos, mysterious celestial bodies defy our understanding of modern physics.',
-    },
-    {
-      id: 'en-US-JennyNeural',
-      name: 'Jenny',
-      lang: 'English (US)',
-      gender: 'Female (Friendly & Modern)',
-      tag: 'Podcast / Promo',
-      sampleText: 'Welcome back to our daily tech show! Today we are looking at revolutionary generative video systems.',
-    },
+    { id: 'bn-pradeep', name: 'প্রদীপ (Pradeep)', lang: 'বাংলা', gender: 'পুরুষ (স্পষ্ট ও উদ্যমী)', tag: 'Viral Reels' },
+    { id: 'bn-nabanita', name: 'নবনিতা (Nabanita)', lang: 'বাংলা', gender: 'নারী (গল্প ও ডকুমেন্টারি)', tag: 'Storytelling' },
+    { id: 'en-christopher', name: 'Christopher', lang: 'English', gender: 'Male (Deep Cinematic)', tag: 'Cinematic' },
+    { id: 'en-jenny', name: 'Jenny', lang: 'English', gender: 'Female (Modern & Friendly)', tag: 'Podcast' },
   ];
 
-  // Voice player test handler using browser SpeechSynthesis or simulated waveform
-  const handlePlayVoiceSample = (voice: typeof sampleVoices[0]) => {
-    if (activePlayingVoice === voice.id) {
+  const handleVoicePlay = (id: string) => {
+    if (playingVoice === id) {
       if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
         window.speechSynthesis.cancel();
       }
-      setActivePlayingVoice(null);
+      setPlayingVoice(null);
       return;
     }
 
-    setActivePlayingVoice(voice.id);
-
+    setPlayingVoice(id);
     if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
       window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(voice.sampleText);
-      utterance.rate = 1.0;
-      utterance.onend = () => setActivePlayingVoice(null);
-      utterance.onerror = () => setActivePlayingVoice(null);
-      window.speechSynthesis.speak(utterance);
+      const text = id.startsWith('bn')
+        ? 'আসসালামু আলাইকুম, AI ভিডিও স্টুডিওতে স্বাগতম।'
+        : 'Welcome to your next-generation creative AI studio.';
+      const utt = new SpeechSynthesisUtterance(text);
+      utt.onend = () => setPlayingVoice(null);
+      utt.onerror = () => setPlayingVoice(null);
+      window.speechSynthesis.speak(utt);
     } else {
-      setTimeout(() => setActivePlayingVoice(null), 4000);
+      setTimeout(() => setPlayingVoice(null), 3000);
     }
   };
 
-  const handleToolClick = (tool: (typeof tools)[0]) => {
-    if (tool.id === 'tts') {
-      setIsTTSOpen(true);
-    } else if (tool.id === 'stt') {
-      setIsSTTOpen(true);
-    } else if (tool.targetTab) {
-      onSelectStudio(tool.targetTab, { subTab: tool.subTab });
-    }
-  };
-
-  const handleExecuteOmnibar = (target: 'images' | 'videos' | 'chat') => {
-    const promptToSend = omnibarPrompt.trim();
-    if (target === 'videos') {
-      onSelectStudio('videos', { prompt: promptToSend, subTab: 'shorts' });
-    } else if (target === 'images') {
-      onSelectStudio('images', { prompt: promptToSend });
-    } else {
-      onSelectStudio('chat', { prompt: promptToSend });
-    }
-  };
-
-  const copyToClipboard = (text: string, label: string) => {
+  const handleCopyPrompt = (id: string, text: string) => {
     if (typeof navigator !== 'undefined' && navigator.clipboard) {
       navigator.clipboard.writeText(text);
-      setCopyToast(`${label} কপি হয়েছে!`);
-      setTimeout(() => setCopyToast(null), 2500);
+      setCopiedId(id);
+      setTimeout(() => setCopiedId(null), 2000);
     }
   };
 
-  const filteredTools = tools.filter((tool) => {
-    const matchesCategory =
-      activeCategory === 'all' || tool.category === activeCategory;
-    const matchesSearch =
-      tool.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      tool.subtitle.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      tool.desktopDesc.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      tool.badge.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesCategory && matchesSearch;
-  });
-
   return (
-    <div className="w-full space-y-7 pb-24 lg:pb-12 animate-in fade-in duration-300 select-none min-w-0">
-      {/* Toast Notification */}
-      {copyToast && (
-        <div className="fixed top-5 right-5 z-50 px-4 py-2.5 rounded-2xl bg-emerald-600 text-white font-bold text-xs shadow-2xl flex items-center gap-2 animate-in slide-in-from-top-2 duration-200">
-          <CheckCircle2 className="w-4 h-4" />
-          <span>{copyToast}</span>
-        </div>
-      )}
-
+    <div className="w-full space-y-8 pb-20 select-none">
       {/* ========================================================
-          1. TOP APP HEADER (Adaptive Mobile & Desktop)
+          1. CLEAN MINIMALIST TOP NAV HEADER
          ======================================================== */}
-      {/* Mobile Top Header */}
-      <div className="flex lg:hidden items-center justify-between pt-1">
-        <button
-          onClick={onToggleMobileMenu || onOpenSettings}
-          className="p-2.5 rounded-2xl bg-[#0b101e] border border-slate-800 hover:border-slate-700 text-slate-300 hover:text-white transition shadow"
-          title="Toggle Menu"
-        >
-          <Menu className="w-5 h-5" />
-        </button>
-
-        <div
-          onClick={onOpenWelcome}
-          className="flex items-center space-x-2 cursor-pointer group"
-          title="Click to view Welcome Splash"
-        >
-          <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-indigo-600 via-purple-600 to-pink-500 p-0.5 shadow-md group-hover:scale-105 transition">
-            <div className="w-full h-full rounded-xl bg-[#0b101d] flex items-center justify-center">
-              <span className="text-xs font-black bg-gradient-to-r from-white via-indigo-200 to-pink-300 bg-clip-text text-transparent">
-                Ai
-              </span>
-            </div>
-          </div>
-          <span className="text-base font-extrabold text-white tracking-tight">
-            AI Studio
-          </span>
-        </div>
-
-        <div className="flex items-center space-x-2">
+      <header className="flex items-center justify-between gap-4 pb-4 border-b border-slate-800/60">
+        {/* Left: Clean Identity */}
+        <div className="flex items-center space-x-3">
           <button
-            onClick={onOpenSettings}
-            className="p-2.5 rounded-2xl bg-[#0b101e] border border-slate-800 text-slate-300 hover:text-white transition shadow relative"
+            onClick={onToggleMobileMenu}
+            className="lg:hidden p-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-300"
           >
-            <Bell className="w-4 h-4" />
-            <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-pink-500"></span>
+            <Menu className="w-5 h-5" />
           </button>
 
-          <div
-            onClick={onOpenSettings}
-            className="w-9 h-9 rounded-2xl bg-gradient-to-tr from-indigo-500 to-purple-600 p-0.5 shadow cursor-pointer"
-          >
-            <div className="w-full h-full rounded-2xl bg-[#141b2d] flex items-center justify-center text-xs font-bold text-white">
-              AR
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Desktop Landscape Header with Live Telemetry Pulse */}
-      <div className="hidden lg:flex items-center justify-between gap-4 pb-3 border-b border-slate-800/60 min-w-0">
-        <div className="min-w-0 flex-1">
-          <div className="flex items-center gap-2 mb-1.5 flex-wrap">
-            <span className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-purple-500/15 border border-purple-500/30 text-purple-300 text-[11px] font-bold">
-              <Sparkles className="w-3 h-3 text-amber-300 animate-spin" style={{ animationDuration: '4s' }} />
-              <span>Super AI Creative Studio</span>
-            </span>
-            <span className="text-xs text-slate-600">•</span>
-            <span className="text-[11px] text-emerald-400 font-semibold flex items-center gap-1.5">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="text-lg sm:text-xl font-black text-white tracking-tight">
+                Creative Studio
               </span>
-              All 6 AI Engines Operational
-            </span>
-            <span className="text-xs text-slate-600">•</span>
-            <span className="text-[11px] text-indigo-300/80 font-medium">
-              Ultra Low Latency (1.2s)
-            </span>
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-[10px] font-bold">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span>Active</span>
+              </span>
+            </div>
+            <p className="text-xs text-slate-400 hidden sm:block mt-0.5">
+              অল-ইন-ওয়ান AI ভিডিও, ৮K ইমেজ ও রিয়েল হিউম্যান ভয়েস জেনারেটর
+            </p>
           </div>
-
-          <h1 className="text-2xl xl:text-3xl font-black text-white leading-tight tracking-tight">
-            {greeting},{' '}
-            <span className="bg-gradient-to-r from-white via-indigo-100 to-purple-300 bg-clip-text text-transparent">
-              Anisur Rahman 👋
-            </span>
-          </h1>
-          <p className="text-xs text-slate-400 mt-0.5">
-            সিনেমাটিক ভিডিও, ৮K ফটোরিয়ালিজম, রিয়েল হিউম্যান ভয়েস এবং মাল্টি-মডেল এআই হাব এক জায়গায়
-          </p>
         </div>
 
-        {/* Desktop Quick Search & Profile */}
-        <div className="flex items-center space-x-3 shrink-0">
-          <div className="relative w-52 xl:w-72">
+        {/* Right: Search & Actions */}
+        <div className="flex items-center space-x-2.5">
+          <div className="relative hidden md:block w-64">
             <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search AI modules (or type /)..."
-              className="w-full pl-9 pr-8 py-2 bg-[#0b101d] border border-slate-800 rounded-xl text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500/30 transition shadow-inner"
+              placeholder="Search studios..."
+              className="w-full pl-9 pr-4 py-2 bg-slate-900/80 border border-slate-800 rounded-xl text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition"
             />
-            {searchQuery && (
-              <button
-                onClick={() => setSearchQuery('')}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white text-xs font-bold"
-              >
-                ✕
-              </button>
-            )}
           </div>
 
           <button
             onClick={onOpenSettings}
-            className="p-2.5 rounded-xl bg-[#0b101e] border border-slate-800 hover:border-slate-700 text-slate-300 hover:text-white transition shadow relative group"
-            title="Settings & API Keys"
+            className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-slate-700 text-xs font-semibold text-slate-300 hover:text-white transition shadow-sm"
           >
-            <Bell className="w-4 h-4 group-hover:rotate-12 transition duration-200" />
-            <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-pink-500"></span>
+            <Key className="w-3.5 h-3.5 text-amber-400" />
+            <span className="hidden sm:inline">API Keys</span>
           </button>
 
           <div
             onClick={onOpenSettings}
-            className="flex items-center space-x-2.5 p-1 pr-3 rounded-xl bg-[#0b101e] border border-slate-800 hover:border-purple-500/40 cursor-pointer transition shadow group"
+            className="w-8 h-8 rounded-xl bg-gradient-to-tr from-indigo-600 to-purple-600 flex items-center justify-center text-xs font-bold text-white shadow cursor-pointer hover:scale-105 transition"
+            title="Anisur Rahman"
           >
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-indigo-500 to-purple-600 p-0.5 shadow group-hover:scale-105 transition">
-              <div className="w-full h-full rounded-lg bg-[#141b2d] flex items-center justify-center text-xs font-bold text-white">
-                AR
-              </div>
-            </div>
-            <div className="text-left hidden xl:block">
-              <div className="text-xs font-bold text-slate-200 group-hover:text-purple-300 transition">Anisur Rahman</div>
-              <div className="text-[10px] text-emerald-400 font-semibold flex items-center gap-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-                <span>Pro Studio Active</span>
-              </div>
-            </div>
+            AR
           </div>
         </div>
-      </div>
+      </header>
 
       {/* ========================================================
-          2. HIGH-TECH DYNAMIC CREATIVE OMNIBAR & HERO SECTION
+          2. LUXURY CINEMATIC HERO & UNIFIED PROMPT BAR
          ======================================================== */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-b from-[#101426] via-[#0d1020] to-[#080b15] border border-purple-500/30 p-5 sm:p-7 lg:p-8 shadow-2xl space-y-6">
-        {/* Ambient Aurora Glow Background */}
-        <div className="absolute top-0 right-1/4 w-96 h-96 bg-gradient-to-br from-purple-600/20 via-pink-600/15 to-transparent blur-3xl rounded-full pointer-events-none"></div>
-        <div className="absolute -bottom-10 left-10 w-72 h-72 bg-gradient-to-tr from-indigo-600/20 via-blue-600/10 to-transparent blur-3xl rounded-full pointer-events-none"></div>
+      <section className="relative overflow-hidden rounded-3xl bg-gradient-to-b from-[#13172c] via-[#0d1020] to-[#070914] border border-indigo-500/20 p-6 sm:p-8 lg:p-10 shadow-2xl">
+        {/* Ambient violet light flare */}
+        <div className="absolute top-0 right-1/4 w-[500px] h-[300px] bg-purple-600/15 blur-[100px] pointer-events-none rounded-full"></div>
+        <div className="absolute bottom-0 left-10 w-[300px] h-[200px] bg-indigo-600/10 blur-[80px] pointer-events-none rounded-full"></div>
 
-        {/* Hero Headline & Badges */}
-        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div className="space-y-2 max-w-2xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gradient-to-r from-purple-500/20 to-pink-500/20 border border-purple-500/40 text-purple-200 text-xs font-extrabold tracking-wide">
-              <Flame className="w-3.5 h-3.5 text-pink-400 animate-bounce" />
-              <span>All-In-One Generative AI Studio • 2026 Edition</span>
-            </div>
-
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-white tracking-tight leading-tight">
-              Create Anything with AI{' '}
-              <span className="bg-gradient-to-r from-pink-400 via-purple-300 to-indigo-300 bg-clip-text text-transparent">
-                Instantly ✨
-              </span>
-            </h2>
-
-            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-              যেকোনো প্রম্পট লিখুন অথবা নিচের শর্টকাট ক্লিক করে সরাসরি সিনেমাটিক ভিডিও রিল, ৮K ইমেজ অথবা মাল্টি-মডেল চ্যাটে প্রবেশ করুন।
-            </p>
+        <div className="relative z-10 max-w-3xl space-y-4">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/25 text-purple-300 text-xs font-semibold">
+            <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+            <span>Next-Generation Creative AI Studio</span>
           </div>
 
-          {/* Quick Metrics Badge Showcase */}
-          <div className="shrink-0 flex items-center gap-2 self-start md:self-center">
-            <div className="px-3.5 py-2.5 rounded-2xl bg-[#090d19]/80 border border-slate-800/90 text-center shadow">
-              <div className="text-xs font-black text-purple-400">FLUX.1 & Gemini</div>
-              <div className="text-[10px] text-slate-400 font-semibold">100% Free Tier</div>
-            </div>
-            <div className="px-3.5 py-2.5 rounded-2xl bg-[#090d19]/80 border border-slate-800/90 text-center shadow">
-              <div className="text-xs font-black text-emerald-400">9:16 & 4K</div>
-              <div className="text-[10px] text-slate-400 font-semibold">Viral Ready</div>
-            </div>
-            <div className="px-3.5 py-2.5 rounded-2xl bg-[#090d19]/80 border border-slate-800/90 text-center shadow">
-              <div className="text-xs font-black text-cyan-400">DeepSeek-R1</div>
-              <div className="text-[10px] text-slate-400 font-semibold">Reasoning AI</div>
-            </div>
-          </div>
+          <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight leading-tight">
+            Generate Cinema-Grade Video &{' '}
+            <span className="bg-gradient-to-r from-purple-400 via-pink-400 to-indigo-300 bg-clip-text text-transparent">
+              8K Visuals
+            </span>
+          </h1>
+
+          <p className="text-xs sm:text-sm text-slate-300 leading-relaxed max-w-2xl">
+            প্রাকৃতিক বাংলা ভয়েসওভার সহ স্বয়ংক্রিয় ৯:১৬ রিলস, ৮K ফটোরিয়ালিস্টিক ছবি, টকিং অবতার ও মাল্টি-মডেল এআই—সবকিছু তৈরি করুন এক ক্লিকে।
+          </p>
         </div>
 
-        {/* Dynamic Creative Omnibar (Real Interactive Prompt Launcher) */}
-        <div className="relative z-10 space-y-3">
-          <div className="relative flex flex-col sm:flex-row items-stretch sm:items-center gap-2 p-2 rounded-2xl bg-[#060912]/90 border border-purple-500/40 focus-within:border-purple-400 focus-within:ring-2 focus-within:ring-purple-500/30 transition shadow-2xl">
-            <div className="flex items-center flex-1 px-3 py-1">
-              <Wand2 className="w-5 h-5 text-purple-400 shrink-0 mr-3 animate-pulse" />
+        {/* Unified Studio Prompt Omnibar */}
+        <div className="relative z-10 mt-7 space-y-3">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 p-2 rounded-2xl bg-black/60 border border-slate-700/60 focus-within:border-indigo-500/80 focus-within:ring-2 focus-within:ring-indigo-500/20 backdrop-blur-xl transition shadow-2xl">
+            <div className="flex items-center flex-1 px-3 py-1.5">
+              <Sparkles className="w-4 h-4 text-purple-400 mr-2.5 shrink-0" />
               <input
                 type="text"
-                value={omnibarPrompt}
-                onChange={(e) => setOmnibarPrompt(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' && omnibarPrompt.trim()) {
-                    handleExecuteOmnibar('images');
-                  }
-                }}
-                placeholder="একটি ধারণা লিখুন (যেমন: 'সূর্যাস্তে প্রাচীন বাংলা গ্রাম' বা 'মহাকাশ বিজ্ঞানের ৩টি রহস্য')..."
-                className="w-full bg-transparent text-white text-xs sm:text-sm placeholder-slate-500 focus:outline-none py-2"
+                value={promptText}
+                onChange={(e) => setPromptText(e.target.value)}
+                placeholder="যেকোনো ভিডিও বা ছবির ধারণা লিখুন (যেমন: 'সূর্যাস্তে শান্ত গ্রামীণ নদী' বা 'স্পেস সায়েন্সের ৩টি রহস্য')..."
+                className="w-full bg-transparent text-white text-xs sm:text-sm placeholder-slate-500 focus:outline-none"
               />
-              {omnibarPrompt && (
-                <button
-                  onClick={() => setOmnibarPrompt('')}
-                  className="text-slate-400 hover:text-white text-xs px-2"
-                >
-                  Clear
-                </button>
-              )}
             </div>
 
-            {/* Quick Multi-Studio Trigger Buttons */}
-            <div className="flex items-center gap-1.5 shrink-0 px-1 pb-1 sm:pb-0">
+            {/* Direct Studio Launch Buttons */}
+            <div className="flex items-center gap-2 shrink-0">
               <button
-                onClick={() => handleExecuteOmnibar('images')}
-                className="flex-1 sm:flex-none px-3.5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-extrabold flex items-center justify-center gap-1.5 shadow-lg shadow-emerald-600/25 transition active:scale-95"
-                title="Create 8K Image from this prompt"
-              >
-                <ImageIcon className="w-3.5 h-3.5" />
-                <span>Create Image</span>
-              </button>
-
-              <button
-                onClick={() => handleExecuteOmnibar('videos')}
-                className="flex-1 sm:flex-none px-3.5 py-2.5 rounded-xl bg-gradient-to-r from-pink-600 via-rose-600 to-indigo-600 hover:from-pink-500 hover:to-indigo-500 text-white text-xs font-extrabold flex items-center justify-center gap-1.5 shadow-lg shadow-pink-600/25 transition active:scale-95"
-                title="Create 9:16 Video Shorts from this prompt"
+                onClick={() => onSelectStudio('videos', { prompt: promptText, subTab: 'shorts' })}
+                className="flex-1 sm:flex-none px-4 py-2.5 rounded-xl bg-gradient-to-r from-pink-600 via-rose-600 to-purple-600 hover:from-pink-500 hover:to-purple-500 text-white text-xs font-bold flex items-center justify-center gap-2 shadow-lg shadow-pink-600/20 transition active:scale-95"
               >
                 <Film className="w-3.5 h-3.5" />
-                <span>Make Shorts (9:16)</span>
+                <span>Create Video</span>
               </button>
 
               <button
-                onClick={() => handleExecuteOmnibar('chat')}
-                className="p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white transition"
-                title="Ask AI Chat"
+                onClick={() => onSelectStudio('images', { prompt: promptText })}
+                className="flex-1 sm:flex-none px-4 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white text-xs font-bold flex items-center justify-center gap-2 shadow-lg shadow-indigo-600/20 transition active:scale-95"
               >
-                <Send className="w-3.5 h-3.5" />
+                <ImageIcon className="w-3.5 h-3.5" />
+                <span>Generate 8K</span>
               </button>
             </div>
           </div>
 
-          {/* Quick Clickable Inspiration Pills */}
+          {/* Quick Idea Pills */}
           <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none text-[11px]">
-            <span className="text-slate-400 font-bold shrink-0 flex items-center gap-1">
-              <Zap className="w-3 h-3 text-amber-400" />
-              <span>Quick Ideas:</span>
-            </span>
-            {quickPrompts.map((item, idx) => (
+            <span className="text-slate-400 font-semibold shrink-0">Quick Ideas:</span>
+            {quickIdeas.map((idea, i) => (
               <button
-                key={idx}
+                key={i}
                 onClick={() => {
-                  setOmnibarPrompt(item.prompt);
-                  onSelectStudio(item.studio, { prompt: item.prompt, subTab: item.subTab });
+                  setPromptText(idea.prompt);
+                  onSelectStudio(idea.studio, { prompt: idea.prompt, subTab: idea.subTab });
                 }}
-                className="shrink-0 px-2.5 py-1 rounded-xl bg-slate-900/80 hover:bg-purple-950/80 border border-slate-800 hover:border-purple-500/50 text-slate-300 hover:text-white transition flex items-center gap-1.5 shadow-sm active:scale-95"
+                className="shrink-0 px-3 py-1 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-slate-800 hover:border-slate-700 text-slate-300 hover:text-white transition flex items-center gap-1.5 shadow-sm"
               >
-                <span>{item.label}</span>
-                <ArrowRight className="w-3 h-3 text-purple-400" />
+                <span>{idea.label}</span>
+                <ChevronRight className="w-3 h-3 text-slate-500" />
               </button>
             ))}
           </div>
         </div>
-      </div>
+      </section>
 
       {/* ========================================================
-          3. CATEGORY FILTER NAVIGATION PILLS
+          3. FOUR MAJOR STUDIO CARDS (Spacious & High-End)
          ======================================================== */}
-      <div className="flex items-center justify-between gap-4 overflow-x-auto pb-1 scrollbar-none min-w-0">
-        <div className="flex items-center space-x-2">
-          <button
-            onClick={() => setActiveCategory('all')}
-            className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all duration-200 shrink-0 ${
-              activeCategory === 'all'
-                ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg shadow-purple-600/30'
-                : 'bg-[#0b101e] border border-slate-800 text-slate-400 hover:text-white'
-            }`}
-          >
-            All Creative Modules ({tools.length})
-          </button>
-
-          <button
-            onClick={() => setActiveCategory('media')}
-            className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all duration-200 shrink-0 flex items-center gap-1.5 ${
-              activeCategory === 'media'
-                ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg shadow-purple-600/30'
-                : 'bg-[#0b101e] border border-slate-800 text-slate-400 hover:text-white'
-            }`}
-          >
-            <Film className="w-3.5 h-3.5" />
-            <span>Video & Visual Studio</span>
-          </button>
-
-          <button
-            onClick={() => setActiveCategory('voice')}
-            className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all duration-200 shrink-0 flex items-center gap-1.5 ${
-              activeCategory === 'voice'
-                ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg shadow-purple-600/30'
-                : 'bg-[#0b101e] border border-slate-800 text-slate-400 hover:text-white'
-            }`}
-          >
-            <Volume2 className="w-3.5 h-3.5" />
-            <span>Neural Voice & Audio</span>
-          </button>
-
-          <button
-            onClick={() => setActiveCategory('content')}
-            className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all duration-200 shrink-0 flex items-center gap-1.5 ${
-              activeCategory === 'content'
-                ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg shadow-purple-600/30'
-                : 'bg-[#0b101e] border border-slate-800 text-slate-400 hover:text-white'
-            }`}
-          >
-            <MessageSquare className="w-3.5 h-3.5" />
-            <span>Multi-LLM & Chat</span>
-          </button>
-
-          <button
-            onClick={() => setActiveCategory('agents')}
-            className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all duration-200 shrink-0 flex items-center gap-1.5 ${
-              activeCategory === 'agents'
-                ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg shadow-purple-600/30'
-                : 'bg-[#0b101e] border border-slate-800 text-slate-400 hover:text-white'
-            }`}
-          >
-            <Bot className="w-3.5 h-3.5" />
-            <span>Autonomous Agents</span>
-          </button>
+      <section className="space-y-4">
+        <div className="flex items-center justify-between">
+          <h2 className="text-base sm:text-lg font-black text-white flex items-center gap-2">
+            <span>Primary Creative Studios</span>
+          </h2>
+          <span className="text-xs text-slate-500 font-semibold">৪টি মূল ক্রিয়েটিভ ইঞ্জিন</span>
         </div>
 
-        <span className="hidden lg:block text-xs text-slate-500 font-semibold shrink-0">
-          Showing {filteredTools.length} modules ready
-        </span>
-      </div>
-
-      {/* ========================================================
-          4. DYNAMIC TOOL CARDS GRID (Modern Elevated Cards)
-         ======================================================== */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 min-w-0">
-        {filteredTools.map((tool) => {
-          const Icon = tool.icon;
-          return (
-            <div
-              key={tool.id}
-              onClick={() => handleToolClick(tool)}
-              className="group cursor-pointer rounded-2xl bg-[#0b101e]/90 hover:bg-[#121930] border border-slate-800/80 hover:border-purple-500/60 p-4 sm:p-5 transition-all duration-300 hover:-translate-y-1.5 shadow-md hover:shadow-2xl hover:shadow-purple-500/10 flex flex-col justify-between relative overflow-hidden min-w-0"
-            >
-              {/* Dynamic top gradient bar on card hover */}
-              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-purple-500/0 to-transparent group-hover:via-purple-400/80 transition duration-300"></div>
-
-              <div>
-                {/* Top Row: Icon + Badge */}
-                <div className="flex items-start justify-between gap-2">
-                  <div
-                    className={`w-11 h-11 rounded-2xl ${tool.iconBg} ${tool.iconColor} flex items-center justify-center shrink-0 shadow-lg group-hover:scale-110 transition duration-300`}
-                  >
-                    <Icon className="w-5 h-5" />
-                  </div>
-
-                  <span
-                    className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full border shrink-0 ${tool.badgeColor}`}
-                  >
-                    {tool.badge}
-                  </span>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {/* Card 1: Video & Auto Shorts */}
+          <div
+            onClick={() => onSelectStudio('videos', { subTab: 'shorts' })}
+            className="group cursor-pointer rounded-2xl bg-[#0b101e] hover:bg-[#11182c] border border-slate-800/80 hover:border-pink-500/50 p-5 transition-all duration-300 hover:-translate-y-1 shadow-lg flex flex-col justify-between"
+          >
+            <div>
+              <div className="flex items-center justify-between mb-4">
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-pink-600 via-rose-600 to-indigo-600 flex items-center justify-center text-white shadow-lg group-hover:scale-110 transition duration-300">
+                  <Film className="w-6 h-6" />
                 </div>
-
-                {/* Title & Descriptions */}
-                <div className="pt-3.5">
-                  <h3 className="text-sm sm:text-base font-black text-white group-hover:text-purple-300 transition truncate">
-                    {tool.title}
-                  </h3>
-                  <div className="text-[11px] font-semibold text-purple-400/90 mt-0.5 truncate">
-                    {tool.subtitle}
-                  </div>
-                  <p className="text-xs text-slate-400 mt-2 line-clamp-2 leading-relaxed">
-                    {tool.desktopDesc}
-                  </p>
-                </div>
-              </div>
-
-              {/* Bottom Action Row */}
-              <div className="pt-3 mt-3 border-t border-slate-800/60 flex items-center justify-between">
-                <span className="text-xs font-bold text-slate-400 group-hover:text-purple-400 transition flex items-center gap-1">
-                  <span>Open Studio</span>
-                  <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition" />
+                <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-pink-500/10 border border-pink-500/30 text-pink-300">
+                  Viral 9:16
                 </span>
-
-                <div className="w-2.5 h-2.5 rounded-full bg-slate-700 group-hover:bg-purple-400 group-hover:shadow-[0_0_10px_rgba(168,85,247,0.9)] transition"></div>
               </div>
+
+              <h3 className="text-base font-black text-white group-hover:text-pink-300 transition">
+                Auto Shorts Studio
+              </h3>
+              <p className="text-xs text-slate-400 mt-2 leading-relaxed">
+                বাংলা ভয়েসওভার ও সিনেমাটিক ৪K ফুটেজ সহ রেডি-টু-পোস্ট ৯:১৬ রিলস তৈরি।
+              </p>
             </div>
-          );
-        })}
-      </div>
+
+            <div className="pt-4 mt-4 border-t border-slate-800/60 flex items-center justify-between text-xs font-bold text-pink-400">
+              <span>Launch Studio</span>
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition" />
+            </div>
+          </div>
+
+          {/* Card 2: 8K Image Studio */}
+          <div
+            onClick={() => onSelectStudio('images')}
+            className="group cursor-pointer rounded-2xl bg-[#0b101e] hover:bg-[#11182c] border border-slate-800/80 hover:border-emerald-500/50 p-5 transition-all duration-300 hover:-translate-y-1 shadow-lg flex flex-col justify-between"
+          >
+            <div>
+              <div className="flex items-center justify-between mb-4">
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-500 flex items-center justify-center text-white shadow-lg group-hover:scale-110 transition duration-300">
+                  <ImageIcon className="w-6 h-6" />
+                </div>
+                <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-300">
+                  100% Free 8K
+                </span>
+              </div>
+
+              <h3 className="text-base font-black text-white group-hover:text-emerald-300 transition">
+                8K Image Studio
+              </h3>
+              <p className="text-xs text-slate-400 mt-2 leading-relaxed">
+                FLUX.1 দিয়ে আল্ট্রা-ফটোরিয়ালিস্টিক, ৩D অ্যানিমেশন, কার্টুন ও অ্যানিমে ছবি।
+              </p>
+            </div>
+
+            <div className="pt-4 mt-4 border-t border-slate-800/60 flex items-center justify-between text-xs font-bold text-emerald-400">
+              <span>Launch Studio</span>
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition" />
+            </div>
+          </div>
+
+          {/* Card 3: Talking Avatar */}
+          <div
+            onClick={() => onSelectStudio('videos', { subTab: 'avatar' })}
+            className="group cursor-pointer rounded-2xl bg-[#0b101e] hover:bg-[#11182c] border border-slate-800/80 hover:border-purple-500/50 p-5 transition-all duration-300 hover:-translate-y-1 shadow-lg flex flex-col justify-between"
+          >
+            <div>
+              <div className="flex items-center justify-between mb-4">
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-purple-600 to-indigo-500 flex items-center justify-center text-white shadow-lg group-hover:scale-110 transition duration-300">
+                  <UserCheck className="w-6 h-6" />
+                </div>
+                <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-purple-500/10 border border-purple-500/30 text-purple-300">
+                  Lip-Sync AI
+                </span>
+              </div>
+
+              <h3 className="text-base font-black text-white group-hover:text-purple-300 transition">
+                Talking Avatar Studio
+              </h3>
+              <p className="text-xs text-slate-400 mt-2 leading-relaxed">
+                মানুষের যেকোনো ছবি ও অডিও আপলোড করে নিখুঁত কথা বলানো ভিডিও জেনারেশন।
+              </p>
+            </div>
+
+            <div className="pt-4 mt-4 border-t border-slate-800/60 flex items-center justify-between text-xs font-bold text-purple-400">
+              <span>Launch Studio</span>
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition" />
+            </div>
+          </div>
+
+          {/* Card 4: Multi-AI Chat */}
+          <div
+            onClick={() => onSelectStudio('chat')}
+            className="group cursor-pointer rounded-2xl bg-[#0b101e] hover:bg-[#11182c] border border-slate-800/80 hover:border-indigo-500/50 p-5 transition-all duration-300 hover:-translate-y-1 shadow-lg flex flex-col justify-between"
+          >
+            <div>
+              <div className="flex items-center justify-between mb-4">
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-indigo-600 to-blue-500 flex items-center justify-center text-white shadow-lg group-hover:scale-110 transition duration-300">
+                  <MessageSquare className="w-6 h-6" />
+                </div>
+                <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-300">
+                  Multi-LLM
+                </span>
+              </div>
+
+              <h3 className="text-base font-black text-white group-hover:text-indigo-300 transition">
+                Multi-AI Chat Hub
+              </h3>
+              <p className="text-xs text-slate-400 mt-2 leading-relaxed">
+                GPT-4o, Claude 3.5 Sonnet, Gemini 2.0 ও DeepSeek-R1 দিয়ে প্রশ্ন ও কোডিং।
+              </p>
+            </div>
+
+            <div className="pt-4 mt-4 border-t border-slate-800/60 flex items-center justify-between text-xs font-bold text-indigo-400">
+              <span>Launch Studio</span>
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition" />
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* ========================================================
-          5. INTERACTIVE LIVE NEURAL VOICEOVER SAMPLER
+          4. SLEEK NEURAL VOICEOVER SAMPLER
          ======================================================== */}
-      <div className="rounded-3xl bg-[#090d1a] border border-slate-800/80 p-5 sm:p-6 shadow-xl space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <section className="rounded-3xl bg-[#0a0e1c] border border-slate-800/80 p-5 sm:p-6 shadow-xl">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
           <div>
-            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-blue-500/10 border border-blue-500/30 text-blue-300 text-[11px] font-bold">
-              <Volume2 className="w-3 h-3 text-cyan-400" />
-              <span>Interactive Audio Synthesizer</span>
-            </div>
-            <h3 className="text-base sm:text-lg font-black text-white mt-1">
-              Neural Voiceover Showcase (বাংলা ও ইংরেজি কণ্ঠ)
+            <h3 className="text-base font-black text-white flex items-center gap-2">
+              <Volume2 className="w-4 h-4 text-cyan-400" />
+              <span>Neural Voiceover Sampler</span>
             </h3>
             <p className="text-xs text-slate-400 mt-0.5">
-              প্লে বাটনে ক্লিক করে সরাসরি কণ্ঠের নমুনা শুনুন এবং আপনার ভিডিওর জন্য পারফেক্ট ভয়েস বেছে নিন
+              ক্লিক করে সরাসরি বাংলা ও ইংরেজি প্রাকৃতিক কণ্ঠের নমুনা শুনুন
             </p>
           </div>
 
           <button
             onClick={() => setIsTTSOpen(true)}
-            className="self-start sm:self-auto px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-extrabold flex items-center gap-2 shadow-lg shadow-blue-600/25 transition active:scale-95"
+            className="self-start sm:self-auto px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-white transition flex items-center gap-1.5"
           >
-            <Volume2 className="w-3.5 h-3.5" />
-            <span>Generate Full Voiceover</span>
+            <span>Open Full Voiceover Tool</span>
+            <ChevronRight className="w-3.5 h-3.5" />
           </button>
         </div>
 
-        {/* 4 Voice Cards Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-          {sampleVoices.map((voice) => {
-            const isPlaying = activePlayingVoice === voice.id;
+          {sampleVoices.map((v) => {
+            const isPlaying = playingVoice === v.id;
             return (
               <div
-                key={voice.id}
-                className={`p-3.5 rounded-2xl border transition-all duration-300 ${
+                key={v.id}
+                className={`p-3.5 rounded-2xl border transition ${
                   isPlaying
-                    ? 'bg-blue-950/40 border-blue-500/60 shadow-lg shadow-blue-500/10'
+                    ? 'bg-blue-950/40 border-blue-500/60 shadow'
                     : 'bg-[#0d1222] border-slate-800/80 hover:border-slate-700'
                 }`}
               >
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-slate-900 border border-slate-700 text-slate-300">
-                    {voice.tag}
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-[10px] font-bold text-slate-400">{v.lang}</span>
+                  <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-slate-900 text-slate-300 border border-slate-800">
+                    {v.tag}
                   </span>
-                  <span className="text-[10px] text-slate-400">{voice.lang}</span>
                 </div>
 
-                <div className="text-sm font-extrabold text-white truncate">{voice.name}</div>
-                <div className="text-[11px] text-slate-400 truncate">{voice.gender}</div>
-
-                {/* Animated Equalizer Wave when playing */}
-                <div className="h-6 my-2.5 flex items-center justify-center gap-1">
-                  {isPlaying ? (
-                    <>
-                      <span className="w-1 h-3 bg-blue-400 rounded-full animate-bounce"></span>
-                      <span className="w-1 h-5 bg-cyan-400 rounded-full animate-bounce delay-75"></span>
-                      <span className="w-1 h-6 bg-indigo-400 rounded-full animate-bounce delay-150"></span>
-                      <span className="w-1 h-4 bg-purple-400 rounded-full animate-bounce delay-100"></span>
-                      <span className="w-1 h-2 bg-blue-400 rounded-full animate-bounce"></span>
-                    </>
-                  ) : (
-                    <div className="w-full h-1 bg-slate-800 rounded-full"></div>
-                  )}
-                </div>
+                <div className="text-xs font-extrabold text-white">{v.name}</div>
+                <div className="text-[11px] text-slate-400 mt-0.5">{v.gender}</div>
 
                 <button
-                  onClick={() => handlePlayVoiceSample(voice)}
-                  className={`w-full py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition ${
+                  onClick={() => handleVoicePlay(v.id)}
+                  className={`w-full mt-3 py-1.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition ${
                     isPlaying
-                      ? 'bg-rose-600 text-white hover:bg-rose-500'
-                      : 'bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white'
+                      ? 'bg-rose-600 text-white'
+                      : 'bg-slate-800 hover:bg-slate-700 text-slate-200'
                   }`}
                 >
                   {isPlaying ? (
                     <>
-                      <Pause className="w-3.5 h-3.5" />
-                      <span>Stop Sample</span>
+                      <Pause className="w-3 h-3" />
+                      <span>Stop</span>
                     </>
                   ) : (
                     <>
-                      <Play className="w-3.5 h-3.5 fill-current" />
+                      <Play className="w-3 h-3 fill-current" />
                       <span>Play Sample</span>
                     </>
                   )}
@@ -798,268 +451,130 @@ export const HomeLaunchpad: React.FC<HomeLaunchpadProps> = ({
             );
           })}
         </div>
-      </div>
+      </section>
 
       {/* ========================================================
-          6. CURATED INSPIRATION & PROMPT EXPLORER GALLERY
+          5. INSPIRATION SHOWCASE GALLERY
          ======================================================== */}
-      <div className="space-y-4 pt-2 min-w-0">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <section className="space-y-4">
+        <div className="flex items-center justify-between">
           <div>
-            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-purple-500/10 border border-purple-500/30 text-purple-300 text-[11px] font-bold">
-              <Sparkles className="w-3 h-3 text-purple-400" />
-              <span>Prompt Inspiration Hub</span>
-            </div>
-            <h3 className="text-base sm:text-lg font-black text-white mt-1">
-              Featured Creations & Instant Remix (100% Free FLUX.1)
+            <h3 className="text-base font-black text-white flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-purple-400" />
+              <span>Inspiration & Prompts</span>
             </h3>
             <p className="text-xs text-slate-400 mt-0.5">
-              যেকোনো প্রম্পট কপি করুন অথবা <strong>Remix in Studio</strong>-তে ক্লিক করে সরাসরি নতুন ভ্যারিয়েশন তৈরি করুন
+              যেকোনো প্রম্পট কপি করুন অথবা <strong>Remix</strong> এ ক্লিক করে সরাসরি তৈরি করুন
             </p>
           </div>
 
           <button
             onClick={() => onSelectStudio('images')}
-            className="self-start sm:self-auto text-xs font-bold text-purple-400 hover:text-purple-300 flex items-center gap-1 transition"
+            className="text-xs font-bold text-purple-400 hover:text-purple-300 flex items-center gap-1 transition"
           >
-            <span>Open Full Gallery</span>
+            <span>View All</span>
             <ArrowRight className="w-3.5 h-3.5" />
           </button>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 min-w-0">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {MOCKUP_ASSETS.recentGenerations.map((item) => (
             <div
               key={item.id}
-              className="group rounded-2xl bg-[#0b101e] border border-slate-800/90 hover:border-purple-500/50 p-3.5 transition-all duration-300 hover:-translate-y-1 shadow-lg flex flex-col justify-between min-w-0"
+              className="rounded-2xl bg-[#0b101e] border border-slate-800/80 hover:border-slate-700 p-3.5 shadow-md flex flex-col justify-between"
             >
               <div>
-                <div className="w-full aspect-[16/10] rounded-xl overflow-hidden bg-slate-950 relative shadow-inner">
+                <div className="w-full aspect-[16/10] rounded-xl overflow-hidden bg-slate-950 relative">
                   <div
-                    className="w-full h-full group-hover:scale-105 transition duration-500"
+                    className="w-full h-full"
                     dangerouslySetInnerHTML={{ __html: item.svgThumb }}
                   />
-                  <span className="absolute top-2.5 left-2.5 text-[10px] font-extrabold px-2 py-0.5 rounded-lg bg-black/70 text-white backdrop-blur-md border border-white/10">
+                  <span className="absolute top-2 left-2 text-[10px] font-bold px-2 py-0.5 rounded-lg bg-black/70 text-white">
                     {item.badge}
-                  </span>
-                  <span className="absolute top-2.5 right-2.5 text-[10px] font-bold px-2 py-0.5 rounded-lg bg-purple-900/80 text-purple-200 backdrop-blur-md border border-purple-500/30">
-                    {item.aspectRatio}
                   </span>
                 </div>
 
                 <div className="pt-3">
-                  <h4 className="text-sm font-extrabold text-white group-hover:text-purple-300 transition truncate">
-                    {item.title}
-                  </h4>
-                  <p className="text-xs text-slate-400 line-clamp-2 mt-1 leading-relaxed">
+                  <h4 className="text-xs font-bold text-white truncate">{item.title}</h4>
+                  <p className="text-[11px] text-slate-400 line-clamp-2 mt-1">
                     {item.prompt}
                   </p>
                 </div>
               </div>
 
-              {/* Action Buttons: Copy Prompt & Remix */}
               <div className="pt-3 mt-3 border-t border-slate-800/60 flex items-center gap-2">
                 <button
-                  onClick={() => copyToClipboard(item.prompt, item.title)}
-                  className="flex-1 py-1.5 px-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-xs font-bold flex items-center justify-center gap-1.5 transition active:scale-95"
+                  onClick={() => handleCopyPrompt(item.id, item.prompt)}
+                  className="flex-1 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold flex items-center justify-center gap-1 transition"
                 >
-                  <Copy className="w-3.5 h-3.5" />
-                  <span>Copy Prompt</span>
+                  {copiedId === item.id ? (
+                    <>
+                      <Check className="w-3 h-3 text-emerald-400" />
+                      <span className="text-emerald-400">Copied!</span>
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="w-3 h-3" />
+                      <span>Copy</span>
+                    </>
+                  )}
                 </button>
 
                 <button
                   onClick={() => onSelectStudio('images', { prompt: item.prompt })}
-                  className="flex-1 py-1.5 px-2 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-bold flex items-center justify-center gap-1.5 shadow-md shadow-purple-600/20 transition active:scale-95"
+                  className="flex-1 py-1.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-semibold flex items-center justify-center gap-1 transition shadow"
                 >
-                  <Sparkles className="w-3.5 h-3.5" />
-                  <span>Remix in Studio</span>
+                  <Sparkles className="w-3 h-3" />
+                  <span>Remix</span>
                 </button>
               </div>
             </div>
           ))}
         </div>
-      </div>
-
-      {/* ========================================================
-          7. PRO WORKFLOW RECIPES (Fast Track Cards)
-         ======================================================== */}
-      <div className="rounded-3xl bg-gradient-to-r from-[#0b1122] via-[#0e162d] to-[#0b1020] border border-slate-800/80 p-5 sm:p-6 shadow-xl space-y-4">
-        <div>
-          <h3 className="text-sm sm:text-base font-black text-white flex items-center gap-2">
-            <Zap className="w-4 h-4 text-amber-400" />
-            <span>Pro Creator Workflows (কাজের গতি ১০ গুণ বাড়িয়ে নিন)</span>
-          </h3>
-          <p className="text-xs text-slate-400 mt-0.5">
-            সরাসরি নির্বাচিত ওয়ার্কফ্লো শুরু করে খুব দ্রুত প্রফেশনাল ফলাফল পান
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-          <div
-            onClick={() => onSelectStudio('videos', { subTab: 'shorts' })}
-            className="p-3.5 rounded-2xl bg-[#070b16] border border-slate-800/80 hover:border-pink-500/50 cursor-pointer transition hover:-translate-y-1 group"
-          >
-            <div className="w-8 h-8 rounded-xl bg-pink-500/20 text-pink-400 flex items-center justify-center mb-2 font-black text-xs">
-              01
-            </div>
-            <div className="text-xs font-extrabold text-white group-hover:text-pink-300 transition">
-              Viral YouTube Shorts
-            </div>
-            <p className="text-[11px] text-slate-400 mt-1">
-              টপিক দিলে Gemini স্ক্রিপ্ট লিখবে এবং FFmpeg দিয়ে রেডি-টু-পোস্ট ৯:১৬ রিল তৈরি।
-            </p>
-          </div>
-
-          <div
-            onClick={() => onSelectStudio('images')}
-            className="p-3.5 rounded-2xl bg-[#070b16] border border-slate-800/80 hover:border-emerald-500/50 cursor-pointer transition hover:-translate-y-1 group"
-          >
-            <div className="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center mb-2 font-black text-xs">
-              02
-            </div>
-            <div className="text-xs font-extrabold text-white group-hover:text-emerald-300 transition">
-              Photorealistic 8K
-            </div>
-            <p className="text-[11px] text-slate-400 mt-1">
-              FLUX.1 দিয়ে সোশ্যাল মিডিয়া অ্যাড ও পোস্টার বানাতে ১০০% ফটোরিয়ালিস্টিক ছবি।
-            </p>
-          </div>
-
-          <div
-            onClick={() => onSelectStudio('videos', { subTab: 'avatar' })}
-            className="p-3.5 rounded-2xl bg-[#070b16] border border-slate-800/80 hover:border-purple-500/50 cursor-pointer transition hover:-translate-y-1 group"
-          >
-            <div className="w-8 h-8 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center mb-2 font-black text-xs">
-              03
-            </div>
-            <div className="text-xs font-extrabold text-white group-hover:text-purple-300 transition">
-              Talking Avatar Video
-            </div>
-            <p className="text-[11px] text-slate-400 mt-1">
-              নিজের ছবি বা যেকোনো ক্যারেক্টারের ছবিতে ভয়েস দিয়ে নিখুঁত কথা বলানো ভিডিও।
-            </p>
-          </div>
-
-          <div
-            onClick={() => onSelectStudio('chat')}
-            className="p-3.5 rounded-2xl bg-[#070b16] border border-slate-800/80 hover:border-indigo-500/50 cursor-pointer transition hover:-translate-y-1 group"
-          >
-            <div className="w-8 h-8 rounded-xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center mb-2 font-black text-xs">
-              04
-            </div>
-            <div className="text-xs font-extrabold text-white group-hover:text-indigo-300 transition">
-              Multi-AI Deep Research
-            </div>
-            <p className="text-[11px] text-slate-400 mt-1">
-              DeepSeek ও Claude 3.5 দিয়ে রিসার্চ, কোডিং সমস্যা এবং কন্টেন্ট আইডিয়া জেনারেশন।
-            </p>
-          </div>
-        </div>
-      </div>
+      </section>
 
       {/* Modals for Quick TTS and STT */}
       <QuickTTSModal isOpen={isTTSOpen} onClose={() => setIsTTSOpen(false)} />
       <QuickVoiceToTextModal isOpen={isSTTOpen} onClose={() => setIsSTTOpen(false)} />
 
-      {/* ========================================================
-          8. FIXED MOBILE BOTTOM NAVIGATION (Hidden on PC/Laptop Landscape: lg:hidden)
-         ======================================================== */}
-      <div className="lg:hidden fixed bottom-0 inset-x-0 z-40 bg-[#080d19]/95 backdrop-blur-xl border-t border-slate-800/80 py-2.5 px-6 max-w-xl mx-auto flex items-center justify-around shadow-2xl">
-        {/* Home */}
+      {/* Mobile Navigation */}
+      <div className="lg:hidden fixed bottom-0 inset-x-0 z-40 bg-[#080d19]/95 backdrop-blur-xl border-t border-slate-800/80 py-2.5 px-6 flex items-center justify-around shadow-2xl">
         <button
           onClick={() => setActiveBottomNav('home')}
-          className="flex flex-col items-center relative group py-1"
+          className="flex flex-col items-center"
         >
-          <Home
-            className={`w-5 h-5 transition ${
-              activeBottomNav === 'home' ? 'text-purple-400' : 'text-slate-500 group-hover:text-slate-300'
-            }`}
-          />
-          <span
-            className={`text-[10px] font-bold mt-1 transition ${
-              activeBottomNav === 'home' ? 'text-white' : 'text-slate-500'
-            }`}
-          >
-            Home
-          </span>
-          {activeBottomNav === 'home' && (
-            <span className="w-4 h-1 rounded-full bg-purple-500 mt-0.5 shadow-md shadow-purple-500/50"></span>
-          )}
+          <Home className={`w-5 h-5 ${activeBottomNav === 'home' ? 'text-purple-400' : 'text-slate-500'}`} />
+          <span className="text-[10px] font-bold text-slate-300 mt-1">Home</span>
         </button>
 
-        {/* Tools */}
         <button
           onClick={() => {
             setActiveBottomNav('tools');
             onSelectStudio('videos');
           }}
-          className="flex flex-col items-center relative group py-1"
+          className="flex flex-col items-center"
         >
-          <Grid
-            className={`w-5 h-5 transition ${
-              activeBottomNav === 'tools' ? 'text-purple-400' : 'text-slate-500 group-hover:text-slate-300'
-            }`}
-          />
-          <span
-            className={`text-[10px] font-bold mt-1 transition ${
-              activeBottomNav === 'tools' ? 'text-white' : 'text-slate-500'
-            }`}
-          >
-            Tools
-          </span>
-          {activeBottomNav === 'tools' && (
-            <span className="w-4 h-1 rounded-full bg-purple-500 mt-0.5 shadow-md shadow-purple-500/50"></span>
-          )}
+          <Grid className={`w-5 h-5 ${activeBottomNav === 'tools' ? 'text-purple-400' : 'text-slate-500'}`} />
+          <span className="text-[10px] font-bold text-slate-300 mt-1">Studios</span>
         </button>
 
-        {/* History */}
         <button
           onClick={() => {
             setActiveBottomNav('history');
             onSelectStudio('notebook');
           }}
-          className="flex flex-col items-center relative group py-1"
+          className="flex flex-col items-center"
         >
-          <Clock
-            className={`w-5 h-5 transition ${
-              activeBottomNav === 'history' ? 'text-purple-400' : 'text-slate-500 group-hover:text-slate-300'
-            }`}
-          />
-          <span
-            className={`text-[10px] font-bold mt-1 transition ${
-              activeBottomNav === 'history' ? 'text-white' : 'text-slate-500'
-            }`}
-          >
-            History
-          </span>
-          {activeBottomNav === 'history' && (
-            <span className="w-4 h-1 rounded-full bg-purple-500 mt-0.5 shadow-md shadow-purple-500/50"></span>
-          )}
+          <Clock className={`w-5 h-5 ${activeBottomNav === 'history' ? 'text-purple-400' : 'text-slate-500'}`} />
+          <span className="text-[10px] font-bold text-slate-300 mt-1">Docs</span>
         </button>
 
-        {/* Saved */}
         <button
-          onClick={() => {
-            setActiveBottomNav('saved');
-            onOpenSettings();
-          }}
-          className="flex flex-col items-center relative group py-1"
+          onClick={onOpenSettings}
+          className="flex flex-col items-center"
         >
-          <Heart
-            className={`w-5 h-5 transition ${
-              activeBottomNav === 'saved' ? 'text-purple-400' : 'text-slate-500 group-hover:text-slate-300'
-            }`}
-          />
-          <span
-            className={`text-[10px] font-bold mt-1 transition ${
-              activeBottomNav === 'saved' ? 'text-white' : 'text-slate-500'
-            }`}
-          >
-            Saved
-          </span>
-          {activeBottomNav === 'saved' && (
-            <span className="w-4 h-1 rounded-full bg-purple-500 mt-0.5 shadow-md shadow-purple-500/50"></span>
-          )}
+          <SlidersHorizontal className="w-5 h-5 text-slate-500" />
+          <span className="text-[10px] font-bold text-slate-300 mt-1">Settings</span>
         </button>
       </div>
     </div>
