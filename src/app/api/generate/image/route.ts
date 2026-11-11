@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
+import { uploadToVercelBlob } from '@/lib/blob-storage';
 
 export async function POST(req: NextRequest) {
   try {
@@ -15,11 +16,6 @@ export async function POST(req: NextRequest) {
 
     if (!prompt || typeof prompt !== 'string' || !prompt.trim()) {
       return NextResponse.json({ error: 'Prompt is required.' }, { status: 400 });
-    }
-
-    const outputDir = path.join(process.cwd(), 'public', 'generated', 'images');
-    if (!fs.existsSync(outputDir)) {
-      fs.mkdirSync(outputDir, { recursive: true });
     }
 
     let width = 1024;
@@ -66,15 +62,39 @@ export async function POST(req: NextRequest) {
     const buffer = Buffer.from(await res.arrayBuffer());
     const hash = crypto.createHash('md5').update(`${styledPrompt}_${seed}`).digest('hex');
     const filename = `img_${hash}.jpg`;
-    const filePath = path.join(outputDir, filename);
 
-    fs.writeFileSync(filePath, buffer);
+    // 1. Try Vercel Blob cloud storage first
+    const cloudUrl = await uploadToVercelBlob(filename, buffer, 'image/jpeg');
+    if (cloudUrl) {
+      return NextResponse.json({
+        success: true,
+        imageUrl: cloudUrl,
+        prompt: styledPrompt,
+      });
+    }
 
-    return NextResponse.json({
-      success: true,
-      imageUrl: `/generated/images/${filename}`,
-      prompt: styledPrompt,
-    });
+    // 2. Local fallback if running locally
+    try {
+      const outputDir = path.join(process.cwd(), 'public', 'generated', 'images');
+      if (!fs.existsSync(outputDir)) {
+        fs.mkdirSync(outputDir, { recursive: true });
+      }
+      const filePath = path.join(outputDir, filename);
+      fs.writeFileSync(filePath, buffer);
+
+      return NextResponse.json({
+        success: true,
+        imageUrl: `/generated/images/${filename}`,
+        prompt: styledPrompt,
+      });
+    } catch {
+      // 3. Fallback to direct pollinations URL
+      return NextResponse.json({
+        success: true,
+        imageUrl: pollUrl,
+        prompt: styledPrompt,
+      });
+    }
   } catch (error: any) {
     console.error('[API/generate/image] Error:', error);
     return NextResponse.json(

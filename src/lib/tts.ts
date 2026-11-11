@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
 import { AVAILABLE_VOICES, TTSVoice } from './voices';
+import { uploadToVercelBlob } from './blob-storage';
 
 export { AVAILABLE_VOICES, type TTSVoice };
 
@@ -20,21 +21,25 @@ export async function generateSpeech({
   pitch?: string;
 }): Promise<{ audioPath: string; audioUrl: string; duration: number }> {
   const publicAudioDir = path.join(process.cwd(), 'public', 'generated', 'audio');
-  if (!fs.existsSync(publicAudioDir)) {
-    fs.mkdirSync(publicAudioDir, { recursive: true });
-  }
+  try {
+    if (!fs.existsSync(publicAudioDir)) {
+      fs.mkdirSync(publicAudioDir, { recursive: true });
+    }
+  } catch {}
 
   const hash = crypto.createHash('md5').update(`${text}_${voice}_${rate}`).digest('hex');
   const filename = `speech_${hash}.mp3`;
   const filePath = path.join(publicAudioDir, filename);
-  const audioUrl = `/generated/audio/${filename}`;
+  let audioUrl = `/generated/audio/${filename}`;
 
-  // If already generated, return cached
-  if (fs.existsSync(filePath)) {
-    const wordCount = text.trim().split(/\s+/).length;
-    const estimatedDuration = Math.max(2, Math.round((wordCount / 2.5) * 10) / 10);
-    return { audioPath: filePath, audioUrl, duration: estimatedDuration };
-  }
+  // If already generated locally, return cached
+  try {
+    if (fs.existsSync(filePath)) {
+      const wordCount = text.trim().split(/\s+/).length;
+      const estimatedDuration = Math.max(2, Math.round((wordCount / 2.5) * 10) / 10);
+      return { audioPath: filePath, audioUrl, duration: estimatedDuration };
+    }
+  } catch {}
 
   // Generate SSML payload
   const ssml = `<speak version='1.0' xmlns='http://www.w3.org/2001/10/synthesis' xml:lang='en-US'>
@@ -64,14 +69,26 @@ export async function generateSpeech({
 
     if (response.ok) {
       const buffer = Buffer.from(await response.arrayBuffer());
-      fs.writeFileSync(filePath, buffer);
+      const cloudUrl = await uploadToVercelBlob(filename, buffer, 'audio/mpeg');
+      if (cloudUrl) {
+        audioUrl = cloudUrl;
+      }
+      try {
+        fs.writeFileSync(filePath, buffer);
+      } catch {}
     } else {
       // Fallback: Create placeholder or alternative TTS
-      await createFallbackSpeech(text, filePath);
+      const fallbackCloudUrl = await createFallbackSpeech(text, filePath);
+      if (fallbackCloudUrl) {
+        audioUrl = fallbackCloudUrl;
+      }
     }
   } catch (err) {
     console.warn('Direct edge synth failed, using fallback synthesizer...', err);
-    await createFallbackSpeech(text, filePath);
+    const fallbackCloudUrl = await createFallbackSpeech(text, filePath);
+    if (fallbackCloudUrl) {
+      audioUrl = fallbackCloudUrl;
+    }
   }
 
   // Estimate duration (approx 2.5 - 3 words per second)
@@ -85,7 +102,7 @@ export async function generateSpeech({
   };
 }
 
-async function createFallbackSpeech(text: string, outputPath: string) {
+async function createFallbackSpeech(text: string, outputPath: string): Promise<string | null> {
   // Use public TTS service as fallback
   const encoded = encodeURIComponent(text.substring(0, 200));
   const fallbackUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encoded}&tl=bn&client=tw-ob`;
@@ -97,16 +114,22 @@ async function createFallbackSpeech(text: string, outputPath: string) {
     });
     if (res.ok) {
       const buf = Buffer.from(await res.arrayBuffer());
-      fs.writeFileSync(outputPath, buf);
-      return;
+      const cloudUrl = await uploadToVercelBlob(path.basename(outputPath), buf, 'audio/mpeg');
+      try {
+        fs.writeFileSync(outputPath, buf);
+      } catch {}
+      return cloudUrl;
     }
   } catch (e) {
     console.error('Fallback TTS failed', e);
   }
   
   // Write minimal silent MP3 if network fails
-  const silentBuffer = Buffer.alloc(1024);
-  fs.writeFileSync(outputPath, silentBuffer);
+  try {
+    const silentBuffer = Buffer.alloc(1024);
+    fs.writeFileSync(outputPath, silentBuffer);
+  } catch {}
+  return null;
 }
 
 function escapeXml(unsafe: string) {

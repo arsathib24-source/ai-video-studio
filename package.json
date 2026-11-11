@@ -12,6 +12,7 @@
     "@ffmpeg-installer/ffmpeg": "^1.1.0",
     "@ffprobe-installer/ffprobe": "^2.1.2",
     "@google/generative-ai": "^0.21.0",
+    "@vercel/blob": "^2.9.0",
     "clsx": "^2.1.1",
     "dotenv": "^16.4.5",
     "fluent-ffmpeg": "^2.1.3",
